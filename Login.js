@@ -6,6 +6,9 @@ import {darkGreen} from './Constants';
 // import Field from './Field';
 import {TextInput} from 'react-native';
 import Axios from 'axios';
+import {app_url} from './Ipaddress';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 
 const Login = ({navigation}) => {
@@ -78,7 +81,10 @@ else
 
         
       // }
-      const url = 'http://192.168.0.104:7001/login'
+      const url = `${app_url}/login`
+
+      const app_url_1 = 'http://192.168.0.104:7001/login'
+      // console.log('apppp',url)
 
       // Axios.post(url,{
         
@@ -90,14 +96,23 @@ else
      }).then((response)=>{
       // console.log('response',response?.data?.results)
       const user_data = response?.data?.results
-      console.log('user',user_data.length)
+      // console.log('user',user_data[0].user_typeid)
+
+      const userId = response?.data?.results[0].user_typeid
+      
 
       if(user_data.length>=1){
         // console.log('enter')
         // navigation.replace('Home');
         // navigation.replace('Home')
         // navigation.navigate('Home')
-        navigation.navigate('add_product')
+        if(userId == 1){
+          navigation.navigate('add_product')
+          // AsyncStorage.setItem('user', 'Login')
+
+        }else{
+          navigation.navigate('barcode')
+        }
         // localStorage.setItem('')
         
 
@@ -113,6 +128,9 @@ else
     // })
     }
 // console.log('name',password)
+
+// console.log('app_url',app_url)
+
   return (
     <Background>
       <View style={{alignItems: 'center', width: 460}}>
