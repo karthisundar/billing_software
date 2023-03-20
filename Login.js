@@ -1,5 +1,5 @@
 import React, { useState,useEffect } from 'react';
-import {View, Text, Touchable, TouchableOpacity,Button} from 'react-native';
+import {View, Text, Touchable, TouchableOpacity,Button,ImageBackground} from 'react-native';
 import Background from './Background';
 import Btn from './Btn';
 import {darkGreen} from './Constants';
@@ -8,6 +8,7 @@ import {TextInput} from 'react-native';
 import Axios from 'axios';
 import {app_url} from './Ipaddress';
 // import AsyncStorage from '@react-native-async-storage/async-storage';
+import wood2 from './wood2.png'
 
 
 
@@ -132,7 +133,7 @@ else
 // console.log('app_url',app_url)
 
   return (
-    <Background>
+    <ImageBackground source={wood2}>
       <View style={{alignItems: 'center', width: 460}}>
         <Text
           style={{
@@ -187,7 +188,7 @@ else
           </View> */}
           {/* <Button>Sigin in </Button> */}
 
-          <Btn textColor='white' bgColor={darkGreen} btnLabel="Login"   Press={handlesubmit} />
+          <Btn textColor='white' bgColor={darkGreen} btnLabel="Login"  disabled={(emailError!==''||passworderror!=='')||(Email==''||password=='')} Press={handlesubmit} />
           <View style={{ display: 'flex', flexDirection :'row', justifyContent: "center" }}>
             <Text style={{ fontSize: 16, fontWeight:"bold" }}>Don't have an account ? </Text>
             <TouchableOpacity onPress={() => navigation.navigate("Signup")}>
@@ -196,7 +197,7 @@ else
           </View>
         </View>
       </View>
-    </Background>
+    </ImageBackground>
   );
 };
 

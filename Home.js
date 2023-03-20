@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, StyleSheet, Text,TouchableOpacity} from 'react-native';
+import {View, StyleSheet, Text,TouchableOpacity,ImageBackground} from 'react-native';
 import { Button } from 'react-native-paper';
 import Background from './Background';
 // import Btn from './Btn';
@@ -8,7 +8,7 @@ import wood2 from './wood2.png'
 
 const Home = (props) => {
   return (
-    <Background source={wood2}>
+    <ImageBackground style={{height:850}} source={wood2}>
       <View style={{ marginHorizontal: 40, marginVertical: 200 }}>
       <Text style={{ color: 'green', fontSize: 64 ,marginBottom:60}}>Welcome</Text>
       {/* <Text style={{ color: 'white', fontSize: 64, marginBottom: 40 }}>Coding</Text> */}
@@ -21,7 +21,7 @@ const Home = (props) => {
       {/* <Btn bgColor={green} sat textColor='white' btnLabel="Login" Press={() => props.navigation.navigate("Login")} />
       <Btn bgColor='white' textColor={darkGreen} btnLabel="Signup" Press={() => props.navigation.navigate("Signup")} /> */}
       </View>
-    </Background>
+    </ImageBackground>
   );
 }
 

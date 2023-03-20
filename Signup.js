@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import {View, Text, Touchable, TouchableOpacity,TextInput,CheckBox} from 'react-native';
+import {View, Text, Touchable, TouchableOpacity,TextInput,CheckBox,StyleSheet} from 'react-native';
 import Background from './Background';
 import Btn from './Btn';
 import {darkGreen} from './Constants';
 import Axios from 'axios'
-// import { render } from 'react-dom';  
-// import { CheckBox } from 'react-native-paper';
-// import Field from './Field';
+// import { render } from 'react-dom'; 
+// import Checkbox from 'expo-checkbox';
+// import DropDownPicker from "react-native-dropdown-picker";
+import { Checkbox,RadioButton } from 'react-native-paper';
+// import Checkbox from './Checkbox'
 
 const Signup = props => {
 
@@ -21,6 +23,7 @@ const Signup = props => {
     const [password,setPassword] = useState('')
     const [passworderror,setpassworderror] = useState('')
     const [formdata,setFormdata] = useState([])
+    const [checked,setChecked] = useState('')
 
     const handlefirstname=(e)=>{
       console.log('e',e)
@@ -133,18 +136,62 @@ const Signup = props => {
     }
 
     const handlesubmit = ()=>{
-      console.log('enter')
+      // console.log('enter')
+      let userType = checked == 0 ? 1:2
+      console.log('checked',userType)
      let from_data = []
-     from_data.push({firstname:firstname,lastname:lastname,Email:Email,mobilenumber:mobilenumber,password:password})
+     const email_id = Email.toString()
+     console.log('email_id',typeof(email_id))
+     from_data.push({firstname:firstname,lastname:lastname,Email:email_id,mobilenumber:mobilenumber,password:password,userType:userType})
 
      const url = 'http://192.168.0.104:7001/signup'
 
      Axios.post(url,{
       formdata:from_data
+     }).then((response)=>{
+      const reponse_data = response?.data?.message
+      console.log('rererererer',response?.data?.message)
+      if(reponse_data =='sucess'){
+        props.navigation.navigate('Login')
+      }else{
+        alert('error')
+      }
      }).catch(error=>console.log('error',error))
     }
     
-    // console.log('eeee',Emailerror)
+const style = StyleSheet.create({
+  container:{
+    justifyContent:'center',
+    alignItems:'center'
+  },
+  checkbox:{
+    width:25,
+    height:25,
+    borderWidth:2,
+    borderColor:'ryan',
+  },
+  options:{
+    flexDirection:'row',
+    marginVertical:10,
+  },
+  option_name:{
+    fontSize:16
+  }
+})
+
+const handlecheckbox =(e)=>{
+      console.log('e',e)
+
+      if(e=='admin'){
+        console.log('enter')
+        setChecked(0)
+      }else{
+        setChecked(1)
+
+      }
+}
+    // const options = ['Admin',"Billing"]
+    // console.log('eeee',options.map(d=>d))
   return (
     <Background>
       <View style={{alignItems: 'center', width: 460}}>
@@ -193,6 +240,8 @@ const Signup = props => {
           <TextInput placeholder="Password" secureTextEntry={true} onChangeText={handlepassword} />
           <Text style={{color:'red'}}>{passworderror}</Text>
 
+         
+
           {/* <TextInput placeholder="Confirm Password" secureTextEntry={true} /> */}
           
 
@@ -202,6 +251,51 @@ const Signup = props => {
                   // value={'item.isChecked'}
                  
                 /> */}
+            {/* <View style={style.container}>
+                {
+
+                  options.map(option=>{
+                    return(
+                    <View key={option} style={style.options}>
+                      <TouchableOpacity style={style.checkbox}>
+                     <Text style={style.option_name} >Name: {option} </Text>   
+                      </TouchableOpacity>
+
+                      </View>
+                      )
+                  })
+                }
+                </View> */}
+
+               
+
+              {/* {
+                options.map((d)=>{
+                  return(
+                    <View key={d}>
+                        <Text>{d}</Text>
+                      </View>
+                  )
+                })
+              } */}
+              <RadioButton.Group onValueChange={handlecheckbox} >
+      <View>
+        <Text>Admin</Text>
+        <RadioButton status={checked==0?'checked':'unchecked'} value='admin' />
+      </View>
+      <View>
+        <Text>Billing</Text>
+        <RadioButton  status={checked==1?'checked':'unchecked'} value='bill' />
+      </View>
+    </RadioButton.Group>
+
+            {/* <Checkbox.Item status={checked} label="Admin"  onPress={(e)=>handlecheckbox("admin")} />
+            <Checkbox.Item label="Bill" onPress={(e)=>handlecheckbox("billing ")} /> */}
+
+
+            {/* <Checkbox  label='Admin' />
+            <Checkbox status={'checked'} onPress={()=>handlecheckbox()} label='Bill' /> */}
+
 
           <Btn
             textColor="white"

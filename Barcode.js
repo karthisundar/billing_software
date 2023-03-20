@@ -3,8 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 // import Billing from './Billing';
 import Axios from 'axios'
-import { View ,Text,StyleSheet,ToastAndroid} from 'react-native';
-import { TextInput } from 'react-native-paper';
+import { View ,Text,StyleSheet,ToastAndroid,ImageBackground} from 'react-native';
+import { Divider, TextInput } from 'react-native-paper';
 import Field from './Field';
 import Btn from './Btn';
 import {darkGreen,black, green,White} from './Constants';
@@ -44,6 +44,8 @@ const [qraccess,setqraccess] = useState('')
 const [search_complete,setsearch_complete] = useState(false)
 const [total,setTotal] = useState('')
 const [overall,setoverall] = useState(0)
+const [printdata,setPrintdata] = useState([])
+const [printtotal,setPrinttotal] = useState([])
 
 
 
@@ -154,7 +156,7 @@ if (hasPermission === false) {
   }
 
   const search_btn = async(e)=>{
-      // const url = 'http://192.168.0.104:7001/searchproduct'
+      const url = 'http://192.168.0.104:7001/searchproduct'
 
       // e.preventDefault()
 
@@ -162,8 +164,8 @@ if (hasPermission === false) {
       // console.log('appppppp',app_2)
       // console.log('urlrr',app_url)
 
-      console.log('post',app_url)
-      Axios.post(`${app_url}/searchproduct`,{
+      // console.log('post',app_url)
+      Axios.post(`http://192.168.0.104:7001/searchproduct`,{
           product_code:product_code
       }).then((response)=>{
           // console.log('response',response?.data?.results)
@@ -287,17 +289,37 @@ const handleclose =()=>{
 
 
     }
+
+    const handleprintdata =(row,total1)=>{
+
+      // console.log('enter',row)
+      let amount_1 = []
+      amount_1.push({sum_amount:total1})
+      // setPrintdata(dd=>[])
+      setPrintdata(search=>[...search,row])
+      // console.log('total',amount_1)
+      setPrinttotal(search=>[...search,total1])
+
+    
+      
+
+    }
 // console.log('text',JSON?.parse(text))
 
   const orginal = search_product.flat()
 
-  // console.log('scaaa',total)
+  const new_data = printtotal?.reduce((a,b)=>a+b,0)
+
+  console.log('scaaa',printdata)
+
+ 
+  
   return (
-    <Background source={wood2}>
+    <ImageBackground source={wood2} style={{height:850}}>
       <ScrollView>
     <View style={styles.container}>
 
-    <View  style={{marginLeft:120,width:230}}>
+    <View  style={{marginLeft:100,width:230}}>
             
 
             <Field  placeholder='product code'    onChangeText={handleproduct}/>
@@ -309,9 +331,9 @@ const handleclose =()=>{
               <Text style={{color:'red'}}>{quantityerror}</Text>
             </View> */}
 
-            <View>
+            <View >
 
-            <Btn textColor='white' disabled={(productcodeerror!=='')||(product_code=='')} Press={search_btn} bgColor={(productcodeerror!=='')||(product_code=='')?black:green} btnLabel="Search"    />
+            <Btn  textColor='white' disabled={(productcodeerror!=='')||(product_code=='')} Press={search_btn} bgColor={(productcodeerror!=='')||(product_code=='')?black:green} btnLabel="Search"    />
 
             <Btn textColor='white' Press={handleBarCodeScanned}  bgColor={black} btnLabel="scan qr"    />
             {/* <Btn textColor='white' Press={handleclose}  bgColor={black} btnLabel="Cancel"    /> */}
@@ -378,7 +400,7 @@ padding: 10
 <DataTable.Cell>{data.product_title}</DataTable.Cell>
 <DataTable.Cell>{data.amount}</DataTable.Cell>
 <DataTable.Cell>{data.quantity}</DataTable.Cell>
-<DataTable.Cell  style={{flex: 1}}><TextInput style={{backgroundColor:'green',width:55}}  onChangeText={(e)=>handleqty_change(data.product_code,data.quantity,e,data.amount)}/></DataTable.Cell>
+<DataTable.Cell  style={{flex: 1}}><TextInput style={{backgroundColor:'white',width:55}} onBlur={()=>handleprintdata(data,total)} onChangeText={(e)=>handleqty_change(data.product_code,data.quantity,e,data.amount)}/></DataTable.Cell>
      <DataTable.Cell>{total}</DataTable.Cell>
 
 {/* <DataTable.Cell>{data.product_code==product_code?<Text  style={{width:100}} >{total}</Text>:''}</DataTable.Cell> */}
@@ -405,15 +427,17 @@ padding: 10
 }
 
 
-<View style={{alignItems:'center'}}>
-        <Text style={{color:'green',backgroundColor:'white'}}>Total:{overall}</Text>
+<View style={{alignItems:'center',padding:10}}>
+        <Text style={{color:'green',backgroundColor:'white',width:100,height:30}}>Total:{new_data}</Text>
       </View>
 
 
-<View style={{flex:1,flexDirection:'column',justifyContent:'center'}}>
+<View style={{flex:1,flexDirection:'column',justifyContent:'center',padding:10}}>
   {/* <Btn btnLabel='print' bgColor={green}/> */}
-  <Btn  btnLabel='cancel' Press={handleclose} bgColor={White} />
-  <Button style={{backgroundColor:'white'}}> Print </Button>
+  <Btn  btnLabel='cancel' Press={handleclose} bgColor='red' />
+  {/* <Button style={{backgroundColor:'white',padding:10}} onPress={()=>handleclose}> Cancel</Button> */}
+  {/* <Divider/> */}
+  <Btn btnLabel='print' bgColor='white'  /> 
 </View>
 
 
@@ -444,7 +468,7 @@ padding: 10
       {/* {scanned && <Button title={'close'} onPress={() => setScanned(false)} color='tomato' />} */}
     </View>
     </ScrollView>
-    </Background>
+    </ImageBackground>
   );
 }
 

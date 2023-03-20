@@ -62,7 +62,7 @@ app.post(`/view_product`,function(req,res){
 
     // const {Email,password}= req.body                                                                                                                                                                                                                                                        
 
-    db.query(`select * from product p`,(err,result)=>{
+    db.query(`select * from product `,(err,result)=>{
         if(err){
             console.log("hhhh",err)
         
@@ -108,13 +108,38 @@ app.post(`/product`,(req,res)=>{
  
 })
 
-app.post(`/view_product`,(req,res)=>{
+// app.post(`/view_product`,(req,res)=>{
     
-    // db.query(`SELECT * FROM user_login ul where  ul.Email  = 'admin@gmail.com'  and ul.password_field  = 'Karthi@123'  and ul.user_type = 1`).then(result=>console.log("err",result))
+//     // db.query(`SELECT * FROM user_login ul where  ul.Email  = 'admin@gmail.com'  and ul.password_field  = 'Karthi@123'  and ul.user_type = 1`).then(result=>console.log("err",result))
 
-    // const {Email,password}= req.body                                                                                                                                                                                                                                                        
+//     // const {Email,password}= req.body                                                                                                                                                                                                                                                        
 
-    db.query(`select * from product p`,(err,result)=>{
+//     db.query(`select * from product   limit 2`,(err,result)=>{
+//         if(err){
+//             // console.log("hhhh",err)
+        
+//             res.status(500).send({message:"error",errors:err})
+
+//         }else{
+//             res.send({message:"sucess",results:result,errors:err})
+//             // console.log("result",result)
+//         }
+//     })
+// })
+
+app.post('/signup',(req,res)=>{
+
+
+    const {formdata} = req.body
+    console.log('reqqqqq',formdata[0].Email)
+    const first_name = formdata[0].firstname
+    const lastname = formdata[0].lastname
+    const email = formdata[0].Email
+    const password = formdata[0].password
+    const usertype = formdata[0].userType
+
+    
+    db.query(`insert into usermaster (first_name,last_name,email_address,password_new,user_typeid) values(?,?,?,?,?)`,[first_name,lastname,email,password,usertype],(err,result)=>{
         if(err){
             console.log("hhhh",err)
         
@@ -122,19 +147,67 @@ app.post(`/view_product`,(req,res)=>{
 
         }else{
             res.send({message:"sucess",results:result,errors:err})
-            // console.log("result",result)
+            console.log("result",result)
         }
     })
+    
+    // db.query(`insert into usermaster (first_name,last_name,email_address,password_new,user_typeid) values[?,?,?,?,?]`,[formdata[0].firstname,formdata[0].lastname,formdata[0].email_id,formdata[0].password,formdata[0].userType],(err,result)=>{
+    //     if(err){
+    //         console.log('err',err)
+    //     }else{
+    //         console.log('result',result)
+    //     }
+    // })
 })
 
-app.post('/signup',(req,res)=>{
 
-    console.log('reqqqqq',req.body)
+///////search product
+
+app.post('/searchproduct',(req,res)=>{
+    console.log('wwwww',req.body)
+
+    const {product_code} = req.body
+
+
+    db.query(`select * from product p where p.product_code=${product_code}`,(err,result)=>{
+        if(err){
+            res.status(500).send({message:"error",errors:err})
+
+        }else{
+            console.log('result',result)
+            res.send({message:"sucess",results:result,errors:err})
+
+
+        }
+    })
+
+   
     
-    
-    
-    // db.query(`insert into usermaster (product_code,product_title,amount,quantity)`)
 })
+
+app.post('/qrsearch',(req,res)=>{
+    console.log('wwwww',req.body)
+
+    const {product_code} = req.body
+    console.log(product_code)
+
+
+    db.query(`select * from product p where p.product_code=${product_code}`,(err,result)=>{
+        if(err){
+            // res.status(500).send({message:"error",errors:err})
+
+        }else{
+            console.log('result',result)
+            // res.send({message:"sucess",results:result,errors:err})
+
+
+        }
+    })
+
+   
+    
+})
+
 
 db.connect((err)=>{
     err? console.log(err): console.log("connected")
