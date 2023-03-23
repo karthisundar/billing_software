@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 // import Billing from './Billing';
 import Axios from 'axios'
-import { View ,Text,StyleSheet,ToastAndroid,ImageBackground} from 'react-native';
+import { View ,Text,StyleSheet,ToastAndroid,ImageBackground,Platform} from 'react-native';
 import { Divider, TextInput } from 'react-native-paper';
 import Field from './Field';
 import Btn from './Btn';
@@ -16,14 +16,33 @@ import { ScrollView } from 'react-native-gesture-handler';
 // import { BarCodeScanner } from 'expo-barcode-scanner';
 // import { BarCodeScanner } from 'expo-barcode-scanner';
 import { app_url } from './Ipaddress';
+import PrintPdf from './PrintPdf';
+import * as Print from 'expo-print';
+import { shareAsync } from 'expo-sharing';
 // import Filed_new from './Field_new';
 // import RNFetchBlob from 'rn-fetch-blob';
 // import { json } from 'express';
+// import Navbar from './Navbar'
 
 
 
 
 
+const html = `
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+  </head>
+  <body style="text-align: center;">
+    <h1 style="font-size: 50px; font-family: Helvetica Neue; font-weight: normal;">
+      Hello World!
+    </h1>
+    <img
+      src="https://d30j33t1r58ioz.cloudfront.net/static/guides/sdk.png"
+      style="width: 90vw;" />
+  </body>
+</html>
+`;
 
 export default function Barcode() {
   const [product_code,setProductcode] = useState('')
@@ -52,6 +71,8 @@ const [printtotal,setPrinttotal] = useState([])
 const [hasPermission, setHasPermission] = useState(null);
 const [scanned, setScanned] = useState(false);
 const [text, setText] = useState('Not yet scanned')
+const [selectedPrinter, setSelectedPrinter] = useState();
+
 
 const askForCameraPermission = () => {
   (async () => {
@@ -239,6 +260,8 @@ const handleclose =()=>{
   setScanned(false)
   setSearch([])
   setTotal('')
+  setPrintdata([])
+  setPrinttotal([])
   
 }
 // console.log('qr_data',qr_data)
@@ -295,6 +318,22 @@ const handleclose =()=>{
       // console.log('enter',row)
       let amount_1 = []
       amount_1.push({sum_amount:total1})
+
+
+      let arr1 = [row]
+      
+      arr1.join({total_amount:total1})
+
+      console.log('aaaaaaaaaaa',arr1)
+
+      
+
+      const arr = [{"amount": 111, "id": 3, "product_code": "111", "product_title": "11", "quantity": 11}, {"total_amount": 111}]
+
+      // const amount_ta = arr.map(d=>d.total_amount)
+      // console.log(amount_ta,'data')
+
+      
       // setPrintdata(dd=>[])
       setPrintdata(search=>[...search,row])
       // console.log('total',amount_1)
@@ -304,11 +343,98 @@ const handleclose =()=>{
       
 
     }
+
+    const print = async () => {
+      // On iOS/android prints the given html. On web prints the HTML from the current page.
+      await Print.printAsync({
+        html: createDynamicTable(),
+        printerUrl: selectedPrinter?.url, // iOS only
+      });
+    }
+  
+    const printToFile = async () => {
+      // On iOS/android prints the given html. On web prints the HTML from the current page.
+      const { uri } = await Print.printToFileAsync({
+        html
+      });
+      console.log('File has been saved to:', uri);
+      await shareAsync(uri, { UTI: '.pdf', mimeType: 'application/pdf' });
+    }
+  
+    const selectPrinter = async () => {
+      const printer = await Print.selectPrinterAsync(); // iOS only
+      setSelectedPrinter(printer);
+    }
+    const orginal = search_product.flat()
+
+    const new_data = printtotal?.reduce((a,b)=>a+b,0)
+  
+    const array = [
+      { company: "Alfreds Futterkiste", contact: "Maria Anders", country: "Germany" },
+      { company: "Centro comercial Moctezuma", contact: "Francisco Chang", country: "Mexico" },
+      { company: "Ernst Handel", contact: "Roland Mendel", country: "Austria" },
+      { company: "Island Trading", contact: "Helen Bennett", country: "UK" },
+      { company: "Laughing Bacchus Winecellars", contact: "Yoshi Tannamuri", country: "Canada" },
+      { company: "Magazzini Alimentari Riuniti", contact: "Giovanni Rovelli", country: "Italy" },
+    ]
+    const createDynamicTable = () => {
+      var table = '';
+      for (let i in printdata) {
+        const item = printdata[i];
+        table = table + `
+        <tr>
+          <td>${item.product_title}</td>
+          <td>${item.quantity}</td>
+          <td>${item.product_code}</td>
+        </tr>
+        `
+      }
+      console.log(table);
+      const html = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+        <style>
+          table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+          }
+          
+          td, th {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+          }
+          
+          tr:nth-child(even) {
+            background-color: #dddddd;
+          }
+        </style>
+        </head>
+        <body>
+        
+        <h2>HTML Table</h2>
+        
+        <table>
+          <tr>
+            <th>product title</th>
+            <th>quantity</th>
+            <th>product code</th>
+          </tr>
+          ${table}
+        </table>
+        <h1>${new_data} </h1>
+        
+        </body>
+      </html>
+        `;
+      return html;
+    }
+
 // console.log('text',JSON?.parse(text))
 
-  const orginal = search_product.flat()
-
-  const new_data = printtotal?.reduce((a,b)=>a+b,0)
+ 
 
   console.log('scaaa',printdata)
 
@@ -319,10 +445,12 @@ const handleclose =()=>{
       <ScrollView>
     <View style={styles.container}>
 
-    <View  style={{marginLeft:100,width:230}}>
+    <View  style={{marginLeft:50,width:230}}>
             
+              <View style={{width:200,marginLeft:60}}>
+              <Field  placeholder='product code'    onChangeText={handleproduct}/>
 
-            <Field  placeholder='product code'    onChangeText={handleproduct}/>
+              </View>
             <View>
               <Text style={{color:'red'}}>{productcodeerror}</Text>
             </View>
@@ -335,7 +463,7 @@ const handleclose =()=>{
 
             <Btn  textColor='white' disabled={(productcodeerror!=='')||(product_code=='')} Press={search_btn} bgColor={(productcodeerror!=='')||(product_code=='')?black:green} btnLabel="Search"    />
 
-            <Btn textColor='white' Press={handleBarCodeScanned}  bgColor={black} btnLabel="scan qr"    />
+            <Btn textColor='white' Press={handleBarCodeScanned}  bgColor={black} btnLabel="Scan QR"    />
             {/* <Btn textColor='white' Press={handleclose}  bgColor={black} btnLabel="Cancel"    /> */}
 
 
@@ -427,19 +555,24 @@ padding: 10
 }
 
 
-<View style={{alignItems:'center',padding:10}}>
+{search_complete?<View style={{alignItems:'center',padding:10}}>
         <Text style={{color:'green',backgroundColor:'white',width:100,height:30}}>Total:{new_data}</Text>
-      </View>
+      </View>:''}
 
 
-<View style={{flex:1,flexDirection:'column',justifyContent:'center',padding:10}}>
+<View style={{flex:1,flexDirection:'column',justifyContent:'center',padding:10,marginLeft:40}}>
   {/* <Btn btnLabel='print' bgColor={green}/> */}
-  <Btn  btnLabel='cancel' Press={handleclose} bgColor='red' />
   {/* <Button style={{backgroundColor:'white',padding:10}} onPress={()=>handleclose}> Cancel</Button> */}
   {/* <Divider/> */}
-  <Btn btnLabel='print' bgColor='white'  /> 
-</View>
+  <Btn btnLabel='print' Press={print} bgColor='white'  /> 
+  <Btn btnLabel='Print to PDF file' Press={printToFile} bgColor='white'/>
+  <Btn  btnLabel='cancel' Press={handleclose} bgColor='red' />
 
+
+</View>
+      <View>
+        {/* <PrintPdf/> */}
+      </View>
 
 </View>
 

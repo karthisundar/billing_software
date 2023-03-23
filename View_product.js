@@ -1,4 +1,4 @@
-import  { useEffect, useState } from 'react';
+import  { useEffect, useState ,useRef} from 'react';
 import *as React from 'react'
 import {View, Text, Touchable, TouchableOpacity, TextInput,StyleSheet, ScrollView,Modal,Pressable,ImageBackground} from 'react-native';
 import Axios from 'axios';
@@ -19,18 +19,38 @@ import wood2 from './wood2.png'
 // import MyComponent from './MyComponent';
 // import RNFetchBlob from 'rn-fetch-blob';
 // import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as FileSystem from "expo-file-system";
+// import * as MediaLibrary from "expo-media-library";
 import * as MailComposer from 'expo-mail-composer';
+import * as Print from 'expo-print';
+import { shareAsync } from 'expo-sharing';
+import Btn from './Btn';
 
 
+const html = `
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+  </head>
+  <body style="text-align: center;">
+    <h1 style="font-size: 50px; font-family: Helvetica Neue; font-weight: normal;">
+      Hello World!
+    </h1>
+    <img
+      src="https://d30j33t1r58ioz.cloudfront.net/static/guides/sdk.png"
+      style="width: 90vw;" />
+  </body>
+</html>
+`;
 
-
-
+// let svg = useRef<SVG>(null)
 const View_product =()=>{
     const [product,setProduct] = useState([])
     const [qr,setqr] = useState([])
     const [visible, setVisible] = useState(false);
     const [page,setPage] = useState(0)
     const optionsPerPage = [0];
+    
 
     // const [itemsPerPage, setItemsPerPage] = useState(optionsPerPage[10]);
     const [modalVisible, setModalVisible] = useState(false);
@@ -40,6 +60,9 @@ const View_product =()=>{
     const [subject, setSubject] = useState(undefined);
     const [body, setBody] = useState(undefined);
     const [email, setEmail] = useState(undefined);
+    const [selectedPrinter, setSelectedPrinter] = useState();
+    const [blobimage,setBlobimage] = useState('')
+
 
     const ref = React.useRef();
     const styles = StyleSheet.create({
@@ -98,7 +121,7 @@ const View_product =()=>{
     textAlign: 'center',
   },
   header:{
-    backgroundColor:'white',
+    backgroundColor:'lightyellow',
     color:'white',
     flex: 3,
     flexWrap: 'wrap',
@@ -106,6 +129,9 @@ const View_product =()=>{
     borderWidth: 2,
     // backgroundColor:'brown       
         overflow: 'visible',
+    fontSize:100,
+    // fontStyle:''
+    fontVariant:'bold'
   }
 });
 
@@ -118,10 +144,29 @@ const View_product =()=>{
         setqr(filter)
       setVisible(true)
 
+
+    
+
+      
+
+      
+
       // const eeeee = new Blob()
 
       // productQRref?.toDataURL(d=>console.log(d,"okookokokok"))
 
+    }
+    const saveQRCode = ()=>{
+    
+  
+      productQRref.toDataURL(async data =>{
+        // console.log('data ',data)
+        // const QRCodeImg = FileSystem.documentDirectory + "QRCode.png";
+        // await FileSystem.writeAsStringAsync(QRCodeImg, data, { encoding: FileSystem.EncodingType.Base64 })
+        // MediaLibrary.saveToLibraryAsync(QRCodeImg)
+        // .then(()=> ))
+        // .catch(console.error)
+      })
     }
 
     const handleClose =()=>{
@@ -134,6 +179,8 @@ const View_product =()=>{
         setIsAvailable(isMailAvailable);
       }
   
+        // console.log('enter useEffect')
+   
       checkAvailability();
         const url = 'http://192.168.0.104:7001/view_product'
 
@@ -145,6 +192,8 @@ const View_product =()=>{
         })
 
     },[])
+
+    
 
     const handledelete = (e)=>{
       console.log('eee',e)
@@ -164,6 +213,114 @@ const View_product =()=>{
     // const data_2 = new Blob(productQRref?.toDataURL(d=>d))
     // console.log('newewewewew',data_2)
 
+
+    const print = async () => {
+      
+          console.log('enter 2')
+      productQRref?.toDataURL( data =>{
+        setBlobimage(data)
+  
+        // console.log('data ',data)
+        // const QRCodeImg = FileSystem.documentDirectory + "QRCode.png";
+        // await FileSystem.writeAsStringAsync(QRCodeImg, data, { encoding: FileSystem.EncodingType.Base64 })
+        // MediaLibrary.saveToLibraryAsync(QRCodeImg)
+        // .then(()=> ))
+        // .catch(console.error)
+      })
+      console.log('dataurl',blobimage)
+      // On iOS/android prints the given html. On web prints the HTML from the current page.
+      // productQRref.toDataURL(async data =>{
+
+      //   setBlobimage(data)
+
+      //   // const QRCodeImg = FileSystem.documentDirectory + "QRCode.png";
+      //   // await FileSystem.writeAsStringAsync(QRCodeImg, data, { encoding: FileSystem.EncodingType.Base64 })
+      //   // MediaLibrary.saveToLibraryAsync(QRCodeImg)
+      //   // .then(()=> ))
+      //   // .catch(console.error)
+      // })
+    
+      await Print.printAsync({
+        html: createDynamicTable(),
+        printerUrl: selectedPrinter?.url, // iOS only
+      });
+    }
+  
+    const printToFile = async () => {
+      // On iOS/android prints the given html. On web prints the HTML from the current page.
+      const { uri } = await Print.printToFileAsync({
+        html
+      });
+      console.log('File has been saved to:', uri);
+      await shareAsync(uri, { UTI: '.pdf', mimeType: 'application/pdf' });
+    }
+  
+    const selectPrinter = async () => {
+      const printer = await Print.selectPrinterAsync(); // iOS only
+      setSelectedPrinter(printer);
+    }
+    // const blobimages =  productQRref?.toDataURL( data =>{
+    //   data
+
+    //   // console.log('data ',data)
+    //   // const QRCodeImg = FileSystem.documentDirectory + "QRCode.png";
+    //   // await FileSystem.writeAsStringAsync(QRCodeImg, data, { encoding: FileSystem.EncodingType.Base64 })
+    //   // MediaLibrary.saveToLibraryAsync(QRCodeImg)
+    //   // .then(()=> ))
+    //   // .catch(console.error)
+    // })
+    // console.log('eeeeeee',blobimages)
+ 
+  
+    
+    const createDynamicTable = () => {
+      console.log('enter1')
+      var table = '';
+     
+        table = table + `
+        <img src="data:image/png;base64,${blobimage}">
+
+        `
+      
+      // console.log(table);
+      const html = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+        <style>
+          table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+          }
+          
+          td, th {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+          }
+          
+          tr:nth-child(even) {
+            background-color: #dddddd;
+          }
+        </style>
+        </head>
+        <body>
+        
+        <h2>HTML Table</h2>
+        
+        
+        <img src="data:image/png;base64,${blobimage}">
+        
+        </body>
+      </html>
+        `;
+      return html;
+    }
+
+    // console.log('imagecheckl',productQRref)
+
+   
     return(
           <ImageBackground source={wood2}>
         <View style={{marginTop:30}}>
@@ -224,7 +381,7 @@ const View_product =()=>{
         transparent={true}
         visible={visible}
         onRequestClose={() => {
-          Alert.alert('Modal has been closed.');
+          alert('Modal has been closed.');
           setModalVisible(!modalVisible);
         }}>
         <View style={styles.centeredView}>
@@ -234,13 +391,16 @@ const View_product =()=>{
              size={250}
              color="black"
              backgroundColor="white"
-          value =  {JSON.stringify({
-             qr_data
-             })}
-             getRef={(c) => setProductQRref(c)}
+          value =  {`${qr_data}`}
+          // getRef={(c) => setProductQRref(c)}
+          getRef={setProductQRref}
             >
 
             </QRCode>
+            <View>
+         <Btn btnLabel='print' Press={print} bgColor='white'  /> 
+          <Btn btnLabel='Print to PDF file' Press={printToFile} bgColor='white'/>
+        </View>
             <Pressable
               style={[styles.button, styles.buttonClose]}
               onPress={handleClose}>
@@ -262,8 +422,7 @@ const View_product =()=>{
         >
         <Text style={styles.textStyle}>Show Modal</Text>
       </Pressable> */}       
-         
-          
+        
           
           </ScrollView>
 
