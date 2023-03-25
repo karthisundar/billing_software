@@ -5,8 +5,7 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "sdkVersion": "48.0.0",
-
+    "sdkVersion": "46.0.0",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
@@ -17,15 +16,22 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to access camera.",
+        "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone"
+      }
     },
     "android": {
-      "package": "karthikeyan.new_billwed",
+      "package": "karthikeyan.new_billwed.bill",
       "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [
+        "android.permission.CAMERA"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -34,9 +40,17 @@
       [
         "expo-barcode-scanner",
         {
-          "cameraPermission": "Allow $(PRODUCT_NAME) to access camera."
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access camera.",
+        "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone"
+
         }
-      ]
-    ]
+      ],
+      "expo-build-properties"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "69de037c-b974-4401-98a1-03dc879ed89d"
+      }
+    }
   }
 }

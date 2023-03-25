@@ -28,22 +28,6 @@ import { shareAsync } from 'expo-sharing';
 
 
 
-const html = `
-<html>
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
-  </head>
-  <body style="text-align: center;">
-    <h1 style="font-size: 50px; font-family: Helvetica Neue; font-weight: normal;">
-      Hello World!
-    </h1>
-    <img
-      src="https://d30j33t1r58ioz.cloudfront.net/static/guides/sdk.png"
-      style="width: 90vw;" />
-  </body>
-</html>
-`;
-
 export default function Barcode() {
   const [product_code,setProductcode] = useState('')
   const [productcodeerror,setProducterror] = useState('')
@@ -65,6 +49,7 @@ const [total,setTotal] = useState('')
 const [overall,setoverall] = useState(0)
 const [printdata,setPrintdata] = useState([])
 const [printtotal,setPrinttotal] = useState([])
+const [qrtext,setqrtext] = useState('')
 
 
 
@@ -73,7 +58,38 @@ const [scanned, setScanned] = useState(false);
 const [text, setText] = useState('Not yet scanned')
 const [selectedPrinter, setSelectedPrinter] = useState();
 
+var new_table = '';
+for (let i in printdata) {
+  const item = printdata[i];
+  new_table = new_table + `
+  <tr>
+    <td>${item.product_title}</td>
+    <td>${item.quantity}</td>
+    <td>${item.product_code}</td>
+  </tr>
+  `
+}
 
+const html = `
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+  </head>
+  <body style="text-align: center;">
+    <h1 style="font-size: 50px; font-family: Helvetica Neue; font-weight: normal;">
+      Hello World!
+    </h1>
+    <table>
+    <tr>
+      <th>product title</th>
+      <th>quantity</th>
+      <th>product code</th>
+    </tr>
+    ${new_table}
+  </table>
+  </body>
+</html>
+`;
 const askForCameraPermission = () => {
   (async () => {
     const { status } = await BarCodeScanner.requestPermissionsAsync();
@@ -107,7 +123,29 @@ const handleBarCodeScanned = ({ type, data }) => {
   // let arra = []
   // arra.push('\n ' + data)
 
-  
+  if(data==undefined){
+    // console.log('enteeererok')
+  }else{
+    setScanned(true)
+    setqrtext(data)
+    Axios.post(`${app_url}/qrid`,{
+      data:data
+    }).then((response)=>{
+      console.log('sssss',response?.data?.results)
+
+      const qrsearch_data = response?.data?.results
+      if(qrsearch_data.length>=1){
+        // search_complete(true)
+        // setSearch(search=>[...search,qrsearch_data])
+        setSearch(search=>[...search,qrsearch_data])
+        setsearch_complete(true)
+        setqraccess(false)
+
+        
+      }
+     })
+    
+  }
 
   // const qr = (type,data)
 
@@ -121,7 +159,7 @@ const handleBarCodeScanned = ({ type, data }) => {
   //   console.log(`${value}`);
   // }
   // console.log('qqqqqqqqq',json.parse(arra[0]))
-  // console.log('Type: ' + type + '\nData: ' + data)
+ 
   // console.log('arra',JSON?.parse(qr))
   // console.log('values',JSON?.parse(arra))
 };
@@ -186,7 +224,7 @@ if (hasPermission === false) {
       // console.log('urlrr',app_url)
 
       // console.log('post',app_url)
-      Axios.post(`http://192.168.0.104:7001/searchproduct`,{
+      Axios.post(`${app_url}/searchproduct`,{
           product_code:product_code
       }).then((response)=>{
           // console.log('response',response?.data?.results)
@@ -369,14 +407,7 @@ const handleclose =()=>{
 
     const new_data = printtotal?.reduce((a,b)=>a+b,0)
   
-    const array = [
-      { company: "Alfreds Futterkiste", contact: "Maria Anders", country: "Germany" },
-      { company: "Centro comercial Moctezuma", contact: "Francisco Chang", country: "Mexico" },
-      { company: "Ernst Handel", contact: "Roland Mendel", country: "Austria" },
-      { company: "Island Trading", contact: "Helen Bennett", country: "UK" },
-      { company: "Laughing Bacchus Winecellars", contact: "Yoshi Tannamuri", country: "Canada" },
-      { company: "Magazzini Alimentari Riuniti", contact: "Giovanni Rovelli", country: "Italy" },
-    ]
+   
     const createDynamicTable = () => {
       var table = '';
       for (let i in printdata) {
@@ -436,7 +467,7 @@ const handleclose =()=>{
 
  
 
-  console.log('scaaa',printdata)
+  console.log('scaaa',search_complete)
 
  
   
@@ -511,13 +542,10 @@ backgroundColor:'white',
         orginal?.map((data,index)=>{
             return(
 <DataTable  style={{
-// flex: 2,
-// flexWrap: 'wrap',
 borderColor: 'green',
 borderWidth: 2,
 width:390,
 overflow: 'visible',
-// marginLeft:-100,
 backgroundColor:'white',
 fontSize: 50, fontWeight: 'bold',
 padding: 10
@@ -530,14 +558,6 @@ padding: 10
 <DataTable.Cell>{data.quantity}</DataTable.Cell>
 <DataTable.Cell  style={{flex: 1}}><TextInput style={{backgroundColor:'white',width:55}} onBlur={()=>handleprintdata(data,total)} onChangeText={(e)=>handleqty_change(data.product_code,data.quantity,e,data.amount)}/></DataTable.Cell>
      <DataTable.Cell>{total}</DataTable.Cell>
-
-{/* <DataTable.Cell>{data.product_code==product_code?<Text  style={{width:100}} >{total}</Text>:''}</DataTable.Cell> */}
-
-{/* <Button mode='contained' onPress={handleqr.bind(null,d.id)} >Genarate</Button>
-
-// <Button mode='outlined'  style={{backgroundColor:'red'}} onPress={(d)=>handledelete(d.id)}>Delete</Button> */}
-
-
 
 </DataTable.Row>
 {/* </ScrollView> */}

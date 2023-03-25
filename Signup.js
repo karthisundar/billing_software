@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {View, Text, Touchable, TouchableOpacity,TextInput,CheckBox,StyleSheet} from 'react-native';
+import {View, Text, Touchable, TouchableOpacity,TextInput,CheckBox,StyleSheet, ImageBackground} from 'react-native';
 import Background from './Background';
 import Btn from './Btn';
 import {darkGreen} from './Constants';
@@ -9,6 +9,7 @@ import Axios from 'axios'
 // import DropDownPicker from "react-native-dropdown-picker";
 import { Checkbox,RadioButton } from 'react-native-paper';
 // import Checkbox from './Checkbox'
+import wood2 from './wood2.png'
 
 const Signup = props => {
 
@@ -107,7 +108,7 @@ const Signup = props => {
    
 
     const handlemobile = (e)=>{
-      console.log('e',e.length)
+      // console.log('e',e.length)
 
       if(e.length<=10){
         setmobileerror('')
@@ -176,6 +177,9 @@ const style = StyleSheet.create({
   },
   option_name:{
     fontSize:16
+  },
+  input:{
+    backgroundColor:'white',textAlign:'center'  ,color:'black',width:300,borderRadius:30,borderColor:'green',borderWidth:2,borderStartColor:'red'
   }
 })
 
@@ -193,7 +197,7 @@ const handlecheckbox =(e)=>{
     // const options = ['Admin',"Billing"]
     // console.log('eeee',options.map(d=>d))
   return (
-    <Background>
+    <ImageBackground source={wood2}>
       <View style={{alignItems: 'center', width: 460}}>
         <Text
           style={{
@@ -222,22 +226,25 @@ const handlecheckbox =(e)=>{
             paddingTop: 50,
             alignItems: 'center',
           }}>
-          <TextInput placeholder="First Name" onChangeText={handlefirstname}/>
+          <TextInput style={style.input} placeholder="First Name" onChangeText={handlefirstname}/>
           <Text style={{color:'red'}}>{fistnameerror}</Text>
-          <TextInput placeholder="Last Name" onChangeText={hanldelastname} />
+          <TextInput style={style.input} placeholder="Last Name" onChangeText={hanldelastname} />
           <Text style={{color:'red'}}>{lastnameError}</Text>
 
           <TextInput
             placeholder="Email "
             keyboardType={'email-address'}
             onChangeText={handleEmail}
+            style={style.input}
           />
           <Text style={{color:'red'}}>{Emailerror}</Text>
 
-          <TextInput placeholder="Contact Number" keyboardType={'number'}  onChangeText={handlemobile}/>
+          <TextInput placeholder="Contact Number" style={style.input}   placeholderTextColor="#60605e"
+          numeric
+          keyboardType={'numeric'} maxLength={10} onChangeText={handlemobile}/>
           <Text style={{color:'red'}}>{mobileerror}</Text>
 
-          <TextInput placeholder="Password" secureTextEntry={true} onChangeText={handlepassword} />
+          <TextInput placeholder="Password" style={style.input} secureTextEntry={true} onChangeText={handlepassword} />
           <Text style={{color:'red'}}>{passworderror}</Text>
 
          
@@ -329,7 +336,7 @@ const handlecheckbox =(e)=>{
           </View>
         </View>
       </View>
-    </Background>
+    </ImageBackground>
   );
 };
 

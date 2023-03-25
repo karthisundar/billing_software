@@ -185,6 +185,24 @@ app.post('/searchproduct',(req,res)=>{
     
 })
 
+app.post('/qrid',(req,res)=>{
+    const {data} = req.body
+
+    console.log('ress',data)
+    db.query(`select * from product p where p.id=${data}`,(err,result)=>{
+        if(err){
+            // res.status(500).send({message:"error",errors:err})
+
+        }else{
+            console.log('result',result)
+            res.send({message:"sucess",results:result,errors:err})
+
+
+        }
+    })
+
+})
+
 app.post('/qrsearch',(req,res)=>{
     console.log('wwwww',req.body)
 

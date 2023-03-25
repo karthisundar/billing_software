@@ -82,7 +82,7 @@ else
 
         
       // }
-      const url = `${app_url}/login`
+      const url = 'http://192.168.29.169:7001/login'
 
       const app_url_1 = 'http://192.168.0.104:7001/login'
       // console.log('apppp',url)
@@ -91,7 +91,7 @@ else
         
       // }).catch(error=>console.log('error',error))
 
-     await Axios.post(url,{
+     await Axios.post(`${app_url}/login`,{
       Email:Email,
       password:password
      }).then((response)=>{
@@ -101,7 +101,8 @@ else
 
       const userId = response?.data?.results[0].user_typeid
       
-
+        setEmail('')
+        setPassword('')
       if(user_data.length>=1){
         // console.log('enter')
         // navigation.replace('Home');
@@ -168,6 +169,8 @@ else
           <TextInput
             placeholder="Email "
             keyboardType={'email-address'}
+            style={{backgroundColor:'white',textAlign:'center'  ,color:'black',width:300,borderRadius:30,borderColor:'black',borderWidth:2,borderStartColor:'red'}}
+
             // onChangeText={text => onChange({ name, type, text })}
             // onBlur={(text)=>handleEmail(text)}
             onChangeText={handleEmail}
@@ -176,7 +179,10 @@ else
           <Text style={{color:'red'}}>
             {emailError}
           </Text>
-          <TextInput placeholder="Password" onChangeText={handlepassword}  secureTextEntry={true} />
+          <TextInput placeholder="Password" 
+                style={{backgroundColor:'white',textAlign:'center'  ,color:'black',width:300,borderRadius:30,borderColor:'black',borderWidth:2,borderStartColor:'red'}}
+          
+          onChangeText={handlepassword}  secureTextEntry={true} />
           <Text style={{color:'red'}}>
             {passworderror}
           </Text>

@@ -1,10 +1,11 @@
-import {View, Text, Touchable, TouchableOpacity, TextInput} from 'react-native';
+import {View, Text, Touchable, TouchableOpacity, TextInput,ImageBackground} from 'react-native';
 // import{Button,Checkbox,Form,Input }  from 'antd';
 
 import React, { useState } from 'react';
 import Btn from './Btn';
 import { darkGreen, green,black } from './Constants';
 import Axios from 'axios';
+import wood2 from './wood2.png'
 
 
 
@@ -119,12 +120,12 @@ const ViewProduct =()=>{
 // console.log('title',titleError)
 
     return(
-
-        <View style={{marginTop:100,marginLeft:20}}>
+            <ImageBackground style={{height:850}} source={wood2}>
+        <View style={{marginTop:100,marginLeft:40}}>
 
             
             <TextInput 
-            
+                style={{backgroundColor:'white',textAlign:'center'  ,color:'black',width:300,borderRadius:30,borderColor:'black',borderWidth:2,borderStartColor:'red'}}
             
             placeholder="Product code"
             onChangeText={handleproductcode}
@@ -134,6 +135,7 @@ const ViewProduct =()=>{
             </Text>
              <TextInput 
             onChangeText={handleqty}
+            style={{backgroundColor:'white',textAlign:'center',color:'black',width:300,borderRadius:30,borderColor:'black',borderWidth:2}}
             
             placeholder="peoduct qutatity"
             // tyoe="number"
@@ -144,6 +146,7 @@ const ViewProduct =()=>{
 
             <TextInput 
             onChangeText={handletitle}
+            style={{backgroundColor:'white',textAlign:'center',color:'black',width:300,borderRadius:30,borderColor:'black',borderWidth:2}}
             
             placeholder="Product Title"/>
             <Text  style={{color:'red'}}>
@@ -151,6 +154,7 @@ const ViewProduct =()=>{
             </Text>
             
              <TextInput 
+                style={{backgroundColor:'white',textAlign:'center',color:'black',width:300,borderRadius:30,borderColor:'black',borderWidth:2}}
             
             placeholder="Product amount"
             multiline
@@ -171,6 +175,7 @@ const ViewProduct =()=>{
 
             
         </View>
+        </ImageBackground>
     )
 }
 

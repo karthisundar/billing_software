@@ -145,9 +145,17 @@ const View_product =()=>{
       setVisible(true)
 
 
-    
+      productQRref?.toDataURL(async data =>{
+        // console.log('data ',data)
+        // setBlobimage(data)
+        // const QRCodeImg = FileSystem.documentDirectory + "QRCode.png";
+        // await FileSystem.writeAsStringAsync(QRCodeImg, data, { encoding: FileSystem.EncodingType.Base64 })
+        // MediaLibrary.saveToLibraryAsync(QRCodeImg)
+        // .then(()=> ))
+        // .catch(console.error)
+      })
 
-      
+      console.log('productQRref',productQRref)
 
       
 
@@ -156,18 +164,7 @@ const View_product =()=>{
       // productQRref?.toDataURL(d=>console.log(d,"okookokokok"))
 
     }
-    const saveQRCode = ()=>{
-    
   
-      productQRref.toDataURL(async data =>{
-        // console.log('data ',data)
-        // const QRCodeImg = FileSystem.documentDirectory + "QRCode.png";
-        // await FileSystem.writeAsStringAsync(QRCodeImg, data, { encoding: FileSystem.EncodingType.Base64 })
-        // MediaLibrary.saveToLibraryAsync(QRCodeImg)
-        // .then(()=> ))
-        // .catch(console.error)
-      })
-    }
 
     const handleClose =()=>{
       setVisible(false)
@@ -180,9 +177,9 @@ const View_product =()=>{
       }
   
         // console.log('enter useEffect')
-   
+        console.log('prprrrr',productQRref)
       checkAvailability();
-        const url = 'http://192.168.0.104:7001/view_product'
+        const url = 'http://192.168.29.169:7001/view_product'
 
         Axios.post(url).then((response)=>{
             // console.log('response',response?.data?.results)
@@ -217,17 +214,17 @@ const View_product =()=>{
     const print = async () => {
       
           console.log('enter 2')
-      productQRref?.toDataURL( data =>{
-        setBlobimage(data)
+      // productQRref?.toDataURL( data =>{
+      //   setBlobimage(data)
   
-        // console.log('data ',data)
-        // const QRCodeImg = FileSystem.documentDirectory + "QRCode.png";
-        // await FileSystem.writeAsStringAsync(QRCodeImg, data, { encoding: FileSystem.EncodingType.Base64 })
-        // MediaLibrary.saveToLibraryAsync(QRCodeImg)
-        // .then(()=> ))
-        // .catch(console.error)
-      })
-      console.log('dataurl',blobimage)
+      //   // console.log('data ',data)
+      //   // const QRCodeImg = FileSystem.documentDirectory + "QRCode.png";
+      //   // await FileSystem.writeAsStringAsync(QRCodeImg, data, { encoding: FileSystem.EncodingType.Base64 })
+      //   // MediaLibrary.saveToLibraryAsync(QRCodeImg)
+      //   // .then(()=> ))
+      //   // .catch(console.error)
+      // })
+      // console.log('dataurl',blobimage)
       // On iOS/android prints the given html. On web prints the HTML from the current page.
       // productQRref.toDataURL(async data =>{
 
@@ -271,10 +268,23 @@ const View_product =()=>{
     // })
     // console.log('eeeeeee',blobimages)
  
-  
+ 
     
     const createDynamicTable = () => {
-      console.log('enter1')
+      productQRref?.toDataURL( data =>{
+        setBlobimage(data)
+  
+        // console.log('data ',data)
+        // const QRCodeImg = FileSystem.documentDirectory + "QRCode.png";
+        // await FileSystem.writeAsStringAsync(QRCodeImg, data, { encoding: FileSystem.EncodingType.Base64 })
+        // MediaLibrary.saveToLibraryAsync(QRCodeImg)
+        // .then(()=> ))
+        // .catch(console.error)
+      })
+
+      console.log(blobimage,'oooooooooooo')
+
+      // console.log('enter1')
       var table = '';
      
         table = table + `
@@ -318,7 +328,7 @@ const View_product =()=>{
       return html;
     }
 
-    // console.log('imagecheckl',productQRref)
+    // console.log('imagecheckl',blobimage)
 
    
     return(
@@ -347,7 +357,7 @@ const View_product =()=>{
         <DataTable.Cell>{d.product_title}</DataTable.Cell>
         <DataTable.Cell>{d.amount}</DataTable.Cell>
         <DataTable.Cell>{d.quantity}</DataTable.Cell>
-        <Button mode='contained' onPress={handleqr.bind(null,d.id)} >Genarate</Button>
+        <Button mode='contained'  onPress={handleqr.bind(null,d.id)} >Genarate</Button>
 
         <Button mode='outlined'  style={{backgroundColor:'red'}} onPress={(d)=>handledelete(d.id)}>Delete</Button>
 
@@ -380,10 +390,7 @@ const View_product =()=>{
         animationType="slide"
         transparent={true}
         visible={visible}
-        onRequestClose={() => {
-          alert('Modal has been closed.');
-          setModalVisible(!modalVisible);
-        }}>
+       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
             <Text style={styles.modalText}>Qr</Text>
@@ -398,7 +405,9 @@ const View_product =()=>{
 
             </QRCode>
             <View>
+              
          <Btn btnLabel='print' Press={print} bgColor='white'  /> 
+         
           <Btn btnLabel='Print to PDF file' Press={printToFile} bgColor='white'/>
         </View>
             <Pressable
