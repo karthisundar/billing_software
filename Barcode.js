@@ -50,6 +50,7 @@ const [overall,setoverall] = useState(0)
 const [printdata,setPrintdata] = useState([])
 const [printtotal,setPrinttotal] = useState([])
 const [qrtext,setqrtext] = useState('')
+const [qty_onchange,setQty]  =useState('')
 
 
 
@@ -308,9 +309,11 @@ const handleclose =()=>{
   // console.log('qraccess',search_product.flat())
 
     const handleqty_change=(e,quantitys,data,amount)=>{
-        console.log('eeeee',e)
+        // console.log('eeeee',e)
 
         const product_codes = search_product.flat()
+
+        setQty(data)
 
         // const check_qty = product_codes.filter(d=>d.product_code==e)
 
@@ -351,22 +354,26 @@ const handleclose =()=>{
 
     }
 
-    const handleprintdata =(row,total1)=>{
+    const handleprintdata =(row,total1,code,index)=>{
 
-      // console.log('enter',row)
+      console.log('enter',row)
       let amount_1 = []
       amount_1.push({sum_amount:total1})
 
 
-      let arr1 = [row]
+      // let arr1 = [row]
+     
+      // arr1.concat(total1)
+      // console.log('qwerty',arr1)
       
-      arr1.join({total_amount:total1})
+      
+      // arr1.join({total_amount:total1})
 
-      console.log('aaaaaaaaaaa',arr1)
+      // console.log('aaaaaaaaaaa',arr1)
 
       
 
-      const arr = [{"amount": 111, "id": 3, "product_code": "111", "product_title": "11", "quantity": 11}, {"total_amount": 111}]
+    
 
       // const amount_ta = arr.map(d=>d.total_amount)
       // console.log(amount_ta,'data')
@@ -375,11 +382,20 @@ const handleclose =()=>{
       // setPrintdata(dd=>[])
       setPrintdata(search=>[...search,row])
       // console.log('total',amount_1)
-      setPrinttotal(search=>[...search,total1])
+      // setPrinttotal(search=>[...search,{product_code:code,total1:total1}])
 
-    
+      // this.setState({
+      //   products: this.state.products.map((product, i) => (
+      //     i === index ? {...product, count: val} : product
+      //   ))
+      // })
+      // console.log('in',orginal.map((product,i)=>(
+      //   i === index
+      // )))
       
-
+      setPrinttotal(orginal.map((product,i)=>(
+        i === index?{...product,count:qty_onchange}:printtotal
+      )))
     }
 
     const print = async () => {
@@ -467,10 +483,37 @@ const handleclose =()=>{
 
  
 
-  console.log('scaaa',search_complete)
 
- 
-  
+// let uniq_1 = printtotal => [...new Set(printtotal)];
+
+// console.log('scaaa',printtotal)
+
+
+// const Total_232 = ({ printtotal }) => (
+//  <Text>
+//     Price: 
+//     {printtotal?.reduce((sum, i) => (
+//       sum += i.count * i.price
+//     ), 0)}
+//   </Text>
+// )
+
+const flat_method = printtotal.flat()
+ console.log('Total_232',flat_method.reduce((sum, i) => (
+    // sum += parseInt(i.count * i.amount)
+
+    typeof(parseInt(i.amount))
+    
+  // sum += parseInt(i.count * i.amount)
+), 0))
+
+const sum = flat_method.reduce((accumulator, object) => {
+  // console.log('acccc',accumulator)
+  return  parseInt (accumulator+object.count + object.amount);
+}, 0);
+
+  console.log('printtotal',sum)
+
   return (
     <ImageBackground source={wood2} style={{height:850}}>
       <ScrollView>
@@ -556,7 +599,7 @@ padding: 10
 <DataTable.Cell>{data.product_title}</DataTable.Cell>
 <DataTable.Cell>{data.amount}</DataTable.Cell>
 <DataTable.Cell>{data.quantity}</DataTable.Cell>
-<DataTable.Cell  style={{flex: 1}}><TextInput style={{backgroundColor:'white',width:55}} onBlur={()=>handleprintdata(data,total)} onChangeText={(e)=>handleqty_change(data.product_code,data.quantity,e,data.amount)}/></DataTable.Cell>
+<DataTable.Cell  style={{flex: 1}}><TextInput style={{backgroundColor:'white',width:55}} onBlur={()=>handleprintdata(data,total,data.product_code,index)} onChangeText={(e)=>handleqty_change(data.product_code,data.quantity,e,data.amount)}/></DataTable.Cell>
      <DataTable.Cell>{total}</DataTable.Cell>
 
 </DataTable.Row>
@@ -576,6 +619,12 @@ padding: 10
 
 
 {search_complete?<View style={{alignItems:'center',padding:10}}>
+<Text>
+    Price: 
+    {printtotal.reduce((sum, i) => (
+      sum += i.count * i.amount
+    ), 0)}
+  </Text>
         <Text style={{color:'green',backgroundColor:'white',width:100,height:30}}>Total:{new_data}</Text>
       </View>:''}
 

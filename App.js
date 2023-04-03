@@ -10,6 +10,8 @@ import Login from './Login';
 import Add_product from './Add_product';
 import View_product from './View_product';
 import Barcode from './Barcode';
+import Editproduct from './Editproduct';
+
 
 
 const Stack = createNativeStackNavigator();
@@ -26,6 +28,8 @@ export default function App() {
       <Stack.Screen name = 'view_product' component={View_product}/>
       {/* <Stack.Screen name = 'barcode' component={Barcode}/> */}
       <Stack.Screen name = 'barcode' component={Barcode}/>
+      <Stack.Screen name = 'edit_product' component={Editproduct}/>
+
     </Stack.Navigator>
   </NavigationContainer>
   );

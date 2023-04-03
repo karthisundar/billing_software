@@ -75,21 +75,46 @@ app.post(`/view_product`,function(req,res){
     })
 })
 
+app.post('/productdelete',function(req,res){
+    const {id} = req.body
+
+    console.log('id',id)
+
+    
+})
+
+app.post('/updateproduct',function(req,res){
+    const {search_product} = req.body
+
+    db.query(`select * from product p where p.product_code=${search_product}`,(err,result)=>{
+        if(err){
+            console.log('errr',err)
+        }else{
+            res.send({message:"sucess",results:result,errors:err})
+
+            console.log('result',result)
+        }
+    })
+
+    console.log('searcchhchchc',search_product)
+})
+
 app.post(`/product`,(req,res)=>{
 
     // const Email=req.body.email;
 
     const  {formdata} = req.body
+    console.log('forrrrr',formdata)
 
     // const product_code_1 = formdata.map(d=>d.product_code)
 
     const product_code_1 = formdata.map(d=>d.product_code)
-    const product = formdata.map(e=>e.product)
+    const product = formdata.map(e=>e.product_title)
     const amount = formdata.map(f=>f.amount)
     // const quantity = formdata.map(j.quantity)
-    const qty = formdata.map(s=>s.qty)
+    const qty = formdata.map(s=>s.product_qty,product)
 
-    // console.log("formdata",formdata)
+    console.log("formdata",qty,)
 
     // const query_data = `insert into product (product_code,product_title,amount,quantity) values(?,?,?,?)`,[product_code_1,product,amount,quantity],(err,result)
 
@@ -185,24 +210,6 @@ app.post('/searchproduct',(req,res)=>{
     
 })
 
-app.post('/qrid',(req,res)=>{
-    const {data} = req.body
-
-    console.log('ress',data)
-    db.query(`select * from product p where p.id=${data}`,(err,result)=>{
-        if(err){
-            // res.status(500).send({message:"error",errors:err})
-
-        }else{
-            console.log('result',result)
-            res.send({message:"sucess",results:result,errors:err})
-
-
-        }
-    })
-
-})
-
 app.post('/qrsearch',(req,res)=>{
     console.log('wwwww',req.body)
 
@@ -224,6 +231,26 @@ app.post('/qrsearch',(req,res)=>{
 
    
     
+})
+
+app.post('/updateproduct_search',(req,res)=>{
+    const {formdata} = req.body
+    console.log('formsss',formdata)
+
+    const total_amount = formdata[0].total
+    const quantity = formdata[0].quantity
+    const product_code = formdata[0].product_code
+    console.log("total_amoun",total_amount)
+
+    db.query(`UPDATE  product as p SET p.amount = ${total_amount} , p.quantity  = ${quantity} where p.product_code = ${product_code}`,(err,result)=>{
+        if(err){
+            console.log('err',err)
+        }else{
+            // console.log('result',result)
+            res.send({message:"sucess",results:result,errors:err})
+
+        }
+    })
 })
 
 

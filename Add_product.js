@@ -1,11 +1,12 @@
-import {View, Text, Touchable, TouchableOpacity, TextInput,ImageBackground} from 'react-native';
+import {View, Text, Touchable, TouchableOpacity, TextInput,ImageBackground,StyleSheet,ScrollView} from 'react-native';
 // import{Button,Checkbox,Form,Input }  from 'antd';
 
 import React, { useState } from 'react';
 import Btn from './Btn';
-import { darkGreen, green,black } from './Constants';
+import { darkGreen, green,black,red } from './Constants';
 import Axios from 'axios';
 import wood2 from './wood2.png'
+import { app_url } from './Ipaddress';
 
 
 
@@ -19,6 +20,8 @@ const Add_product = ({navigation})=>{
     const [titleError,settitleerror] = useState('')
     const [amount,setAmount] = useState('')
     const [amount_error,setAmountError] = useState('')
+    const [search_product , setProduct] = useState('')
+    const [editproduct,setEditproduct] = useState([])
     
 
     const handleproductcode =(e)=>{
@@ -87,12 +90,12 @@ const handlesubmit=()=>{
     Axios.post(url,{
         formdata
     }).then((res)=>{
-        console.log('response',res?.data.results?.affectedRows)
+        // console.log('response',res?.data.results?.affectedRows)
 
        const affectedRows = res?.data.results?.affectedRows
 
        if(affectedRows == 1){
-        alert('ok')
+        alert('ok saved')
        }else{
         alert('did not saved ')
        }
@@ -119,14 +122,51 @@ const ViewProduct =()=>{
 // }, []);
 // console.log('title',titleError)
 
+const styles = StyleSheet.create({
+
+    input:{
+        backgroundColor:'white',textAlign:'center'  ,color:'black',width:300,borderRadius:30,borderColor:'black',borderWidth:2,borderStartColor:'red'
+    }
+})
+
+const clear = ()=>{
+    setAmount('')
+    setProductcode('')
+    setproduct_title('')
+    setproductqty('')
+    setAmount('')
+}
+
+        const product_edit = (e)=>{
+            console.log('eee',e)
+            const id = e
+            if(id!==''){
+                setProduct(e)
+            }else{
+                // console.log('exit')
+            }
+        }
+
+        const handlesearch_product = ()=>{
+            console.log('enter',search_product)
+    navigation.navigate('edit_product')
+
+
+            
+        }
+
     return(
-            <ImageBackground style={{height:850}} source={wood2}>
-        <View style={{marginTop:100,marginLeft:40}}>
+        <ScrollView>
+
+        <ImageBackground style={{height:850}} source={wood2}>
+        <View style={{marginTop:100,marginLeft:50}}>
 
             
             <TextInput 
-                style={{backgroundColor:'white',textAlign:'center'  ,color:'black',width:300,borderRadius:30,borderColor:'black',borderWidth:2,borderStartColor:'red'}}
+            style={styles.input}
             
+            
+            value={product_code}
             placeholder="Product code"
             onChangeText={handleproductcode}
             />
@@ -135,9 +175,9 @@ const ViewProduct =()=>{
             </Text>
              <TextInput 
             onChangeText={handleqty}
-            style={{backgroundColor:'white',textAlign:'center',color:'black',width:300,borderRadius:30,borderColor:'black',borderWidth:2}}
-            
+            style={styles.input}
             placeholder="peoduct qutatity"
+            value={product_qty}
             // tyoe="number"
             />
               <Text style={{color:'red'}}>
@@ -146,16 +186,16 @@ const ViewProduct =()=>{
 
             <TextInput 
             onChangeText={handletitle}
-            style={{backgroundColor:'white',textAlign:'center',color:'black',width:300,borderRadius:30,borderColor:'black',borderWidth:2}}
-            
+            style={styles.input}
+            value={product_title}
             placeholder="Product Title"/>
             <Text  style={{color:'red'}}>
                 {titleError}
             </Text>
             
              <TextInput 
-                style={{backgroundColor:'white',textAlign:'center',color:'black',width:300,borderRadius:30,borderColor:'black',borderWidth:2}}
-            
+            style={styles.input}
+            value={amount}
             placeholder="Product amount"
             multiline
             onChangeText={handleamount}
@@ -166,16 +206,25 @@ const ViewProduct =()=>{
             </Text>
 
             {/* <button>Save</button> */}
-            <Btn bgColor={green} textColor='white' btnLabel="Save" Press={handlesubmit} />
+
+            <Btn bgColor={(product_codeerror!==''||productqtyerror!==''||titleError!==''||amount_error!=='')||(product_code==''&&product_title==''&&product_qty==''&&amount=='')?green:black} textColor='white' disabled={(product_codeerror!==''||productqtyerror!==''||titleError!==''||amount_error!=='')||(product_code==''&&product_title==''&&product_qty==''&&amount=='')} btnLabel="Save" Press={handlesubmit} />
 
 
             <Btn bgColor={black} textColor='white' btnLabel="View Product" Press={ViewProduct} />
 
+           
 
 
+            <Btn bgColor={red} textColor='white' btnLabel="Clear" Press={clear} />
+
+
+            <Btn bgColor={black} textColor='white' Press={handlesearch_product} btnLabel="Edit Product"  />
+           
             
         </View>
         </ImageBackground>
+        </ScrollView>
+
     )
 }
 

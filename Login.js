@@ -2,13 +2,14 @@ import React, { useState,useEffect } from 'react';
 import {View, Text, Touchable, TouchableOpacity,Button,ImageBackground} from 'react-native';
 import Background from './Background';
 import Btn from './Btn';
-import {darkGreen} from './Constants';
+import {black, darkGreen, green} from './Constants';
 // import Field from './Field';
 import {TextInput} from 'react-native';
 import Axios from 'axios';
 import {app_url} from './Ipaddress';
 // import AsyncStorage from '@react-native-async-storage/async-storage';
 import wood2 from './wood2.png'
+
 
 
 
@@ -138,7 +139,7 @@ else
       <View style={{alignItems: 'center', width: 460}}>
         <Text
           style={{
-            color: 'white',
+            color: 'lightyellow',
             fontSize: 64,
             fontWeight: 'bold',
             marginVertical: 20,
@@ -147,12 +148,13 @@ else
         </Text>
         <View
           style={{
-            backgroundColor: 'white',
-            height: 700,
+            backgroundColor: 'lightyellow',
+            height: 800,
             width: 460,
-            borderTopLeftRadius: 130,
+            borderTopLeftRadius: 250,
             paddingTop: 100,
             alignItems: 'center',
+            marginRight:30
           }}>
           <Text style={{fontSize: 40, color: darkGreen, fontWeight: 'bold'}}>
             Welcome Back
@@ -194,7 +196,7 @@ else
           </View> */}
           {/* <Button>Sigin in </Button> */}
 
-          <Btn textColor='white' bgColor={darkGreen} btnLabel="Login"  disabled={(emailError!==''||passworderror!=='')||(Email==''||password=='')} Press={handlesubmit} />
+          <Btn textColor='white'  bgColor={(emailError!==''||passworderror!=='')||(Email==''||password=='')?green:black} btnLabel="Login"  disabled={(emailError!==''||passworderror!=='')||(Email==''||password=='')} Press={handlesubmit} />
           <View style={{ display: 'flex', flexDirection :'row', justifyContent: "center" }}>
             <Text style={{ fontSize: 16, fontWeight:"bold" }}>Don't have an account ? </Text>
             <TouchableOpacity onPress={() => navigation.navigate("Signup")}>

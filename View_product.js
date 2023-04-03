@@ -1,4 +1,4 @@
-import  { useEffect, useState ,useRef} from 'react';
+import  { useEffect, useState } from 'react';
 import *as React from 'react'
 import {View, Text, Touchable, TouchableOpacity, TextInput,StyleSheet, ScrollView,Modal,Pressable,ImageBackground} from 'react-native';
 import Axios from 'axios';
@@ -25,23 +25,11 @@ import * as MailComposer from 'expo-mail-composer';
 import * as Print from 'expo-print';
 import { shareAsync } from 'expo-sharing';
 import Btn from './Btn';
+import { app_url } from './Ipaddress';
 
 
-const html = `
-<html>
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
-  </head>
-  <body style="text-align: center;">
-    <h1 style="font-size: 50px; font-family: Helvetica Neue; font-weight: normal;">
-      Hello World!
-    </h1>
-    <img
-      src="https://d30j33t1r58ioz.cloudfront.net/static/guides/sdk.png"
-      style="width: 90vw;" />
-  </body>
-</html>
-`;
+
+
 
 // let svg = useRef<SVG>(null)
 const View_product =()=>{
@@ -64,7 +52,7 @@ const View_product =()=>{
     const [blobimage,setBlobimage] = useState('')
 
 
-    const ref = React.useRef();
+    // const ref = React.useRef();
     const styles = StyleSheet.create({
   container: {
     padding: 5,
@@ -123,7 +111,7 @@ const View_product =()=>{
   header:{
     backgroundColor:'lightyellow',
     color:'white',
-    flex: 3,
+    flex: 5,
     flexWrap: 'wrap',
     borderColor: 'yellow',
     borderWidth: 2,
@@ -145,9 +133,12 @@ const View_product =()=>{
       setVisible(true)
 
 
-      productQRref?.toDataURL(async data =>{
-        // console.log('data ',data)
+      productQRref?.toDataURL( data =>{
         // setBlobimage(data)
+        // data
+        console.log('opopopopopopopopo',data)
+  
+        // console.log('data ',data)
         // const QRCodeImg = FileSystem.documentDirectory + "QRCode.png";
         // await FileSystem.writeAsStringAsync(QRCodeImg, data, { encoding: FileSystem.EncodingType.Base64 })
         // MediaLibrary.saveToLibraryAsync(QRCodeImg)
@@ -155,7 +146,7 @@ const View_product =()=>{
         // .catch(console.error)
       })
 
-      console.log('productQRref',productQRref)
+      // console.log('productQRref',productQRref)
 
       
 
@@ -179,7 +170,7 @@ const View_product =()=>{
         // console.log('enter useEffect')
         console.log('prprrrr',productQRref)
       checkAvailability();
-        const url = 'http://192.168.29.169:7001/view_product'
+        const url = `${app_url}/view_product`
 
         Axios.post(url).then((response)=>{
             // console.log('response',response?.data?.results)
@@ -194,6 +185,15 @@ const View_product =()=>{
 
     const handledelete = (e)=>{
       console.log('eee',e)
+      const id = e
+
+      url = `${app_url}/productdelete`
+
+      Axios.post(url,{
+          id:id
+      }).then((response)=>{
+        console.log('========',response?.data?.results)
+      }).catch(err=>console.log('errrrr',err))
 
 
     }
@@ -212,6 +212,20 @@ const View_product =()=>{
 
 
     const print = async () => {
+
+
+      productQRref?.toDataURL( data =>{
+        setBlobimage(data)
+  
+        // console.log('data ',data)
+        // const QRCodeImg = FileSystem.documentDirectory + "QRCode.png";
+        // await FileSystem.writeAsStringAsync(QRCodeImg, data, { encoding: FileSystem.EncodingType.Base64 })
+        // MediaLibrary.saveToLibraryAsync(QRCodeImg)
+        // .then(()=> ))
+        // .catch(console.error)
+      })
+
+      console.log(blobimage,'oooooooooooo')
       
           console.log('enter 2')
       // productQRref?.toDataURL( data =>{
@@ -268,28 +282,36 @@ const View_product =()=>{
     // })
     // console.log('eeeeeee',blobimages)
  
+     productQRref?.toDataURL( data =>{
+      setBlobimage(data)
+     
+    })
+    const html = `
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+  </head>
+  <body style="text-align: center;">
+    <h1 style="font-size: 50px; font-family: Helvetica Neue; font-weight: normal;">
+      Hello World!
+    </h1>
+    <img src="data:image/png;base64,${blobimage}">
+
+
  
+  </body>
+</html>
+`;
+    // console.log('imagecheckl',ooo)
     
     const createDynamicTable = () => {
-      productQRref?.toDataURL( data =>{
-        setBlobimage(data)
-  
-        // console.log('data ',data)
-        // const QRCodeImg = FileSystem.documentDirectory + "QRCode.png";
-        // await FileSystem.writeAsStringAsync(QRCodeImg, data, { encoding: FileSystem.EncodingType.Base64 })
-        // MediaLibrary.saveToLibraryAsync(QRCodeImg)
-        // .then(()=> ))
-        // .catch(console.error)
-      })
-
-      console.log(blobimage,'oooooooooooo')
+     
 
       // console.log('enter1')
       var table = '';
      
         table = table + `
         <img src="data:image/png;base64,${blobimage}">
-
         `
       
       // console.log(table);
@@ -328,14 +350,15 @@ const View_product =()=>{
       return html;
     }
 
-    // console.log('imagecheckl',blobimage)
+
+
 
    
     return(
           <ImageBackground source={wood2}>
         <View style={{marginTop:30}}>
           <ScrollView>
-             <DataTable.Header style={styles.header}>
+             <DataTable.Header  style={styles.header}>
         <DataTable.Title>product code</DataTable.Title>
         <DataTable.Title>product title</DataTable.Title>
         <DataTable.Title>amount</DataTable.Title>
@@ -359,7 +382,7 @@ const View_product =()=>{
         <DataTable.Cell>{d.quantity}</DataTable.Cell>
         <Button mode='contained'  onPress={handleqr.bind(null,d.id)} >Genarate</Button>
 
-        <Button mode='outlined'  style={{backgroundColor:'red'}} onPress={(d)=>handledelete(d.id)}>Delete</Button>
+        <Button mode='outlined'  style={{backgroundColor:'red'}} onPress={handledelete.bind(null,d.id)}>Delete</Button>
 
 
 
