@@ -28,7 +28,7 @@ import { shareAsync } from 'expo-sharing';
 
 
 
-export default function Barcode() {
+export default function Barcode({navigation}) {
   const [product_code,setProductcode] = useState('')
   const [productcodeerror,setProducterror] = useState('')
   const [search_product,setSearch] = useState([])
@@ -50,7 +50,9 @@ const [overall,setoverall] = useState(0)
 const [printdata,setPrintdata] = useState([])
 const [printtotal,setPrinttotal] = useState([])
 const [qrtext,setqrtext] = useState('')
-const [qty_onchange,setQty]  =useState('')
+const [qty_onchange,setQty]  =useState([])
+const [mobile,setMobile] = useState('')
+const [mobileerror,setmobileerror] = useState('')
 
 
 
@@ -58,6 +60,9 @@ const [hasPermission, setHasPermission] = useState(null);
 const [scanned, setScanned] = useState(false);
 const [text, setText] = useState('Not yet scanned')
 const [selectedPrinter, setSelectedPrinter] = useState();
+const [Customer,setCustomername]  = useState('')
+const [nameerror,setNameerror] = useState('')
+const [updatestate,setUpdate] = useState([])
 
 var new_table = '';
 for (let i in printdata) {
@@ -103,8 +108,12 @@ useEffect(() => {
   askForCameraPermission();
   // search_btn();
   // console.log('eeeeee',search_product)
+
+  const product_codes = orginal?.map(d=>d.product_code)
+
+  console.log('prrrrrr',product_codes)
  
-},[]);
+},[orginal]);
 
 // useEffect(()=>{
 //   console.log('enter useEffect')
@@ -303,107 +312,106 @@ const handleclose =()=>{
   setPrinttotal([])
   
 }
-// console.log('qr_data',qr_data)
-  // Return the View
 
-  // console.log('qraccess',search_product.flat())
 
-    const handleqty_change=(e,quantitys,data,amount)=>{
-        // console.log('eeeee',e)
+    const handleqty_change=(e,quantitys,data,amount,index)=>{
 
-        const product_codes = search_product.flat()
 
-        setQty(data)
+      console.log('indes',e)
 
-        // const check_qty = product_codes.filter(d=>d.product_code==e)
+    //   let newArr = [...orginal,data];
 
-        //   const check_orfinal = check_qty.filter(d=>d.quantity==data)
+    //   newArr[index] = data
+
+    //   setQty(datas=>({
+    //     ...datas,
+    //     [index]: newArr
+    //  }))
+
+
+    // let newArr = [...orginal];
+    // newArr[index] = data;
+    // console.log('newewewe',newArr)
+
+    // setQty(orginal?.map((product,i)=>(
+      
+
+    //   i === index?{...product,count_new:data}:{...product}
+    // )))
+
+   
+
+   console.log('eeeeee0,e0',amount)
+
+        // setQty(newArr)
+
+      // console.log('newewewewew',newArr)
 
         if(quantitys<=data){
           alert('plz enter low quantity')
         }else{
-          // console.log('enter')
           const total  = amount*data
-          console.log('total',total)
 
           const overall = total+0
 
-          console.log('overrer',overall)
+          setQty(datas=>({
+            ...datas,
+            // ['amount']: overall,
+            [index]:overall
+         }))
+
+         setUpdate(dd=>({
+          ...dd,
+          [index]:overall
+         }))
+
+
+         const newArray = orginal.map((item, i) => {
+          if (index === i) {
+            return { ...item, ['count_new']: overall };
+          } else {
+            return item;
+          }
+        });
+        console.log('newarray',newArray)
 
           setoverall(overall)
 
-          // setTotal((state) => {
-          //   const newObject = {...state.total};
-          //   // newObject[`${index}`] = {value: total}
-          //   return {objects: newObject }
-          //  });
-          let form_data = new FormData()
-
-          // form_data.append(searchh=>[...searchh,total])
-
-          // console.log('formdata',form_data)
-          
-          
+         
           setTotal(total)
 
         }
 
-        // console.log('dadada',quantitys<=data)
-
-
-
     }
 
     const handleprintdata =(row,total1,code,index)=>{
-
-      console.log('enter',row)
       let amount_1 = []
       amount_1.push({sum_amount:total1})
 
-
-      // let arr1 = [row]
-     
-      // arr1.concat(total1)
-      // console.log('qwerty',arr1)
+      setPrintdata(search=>[...search,row])      
       
-      
-      // arr1.join({total_amount:total1})
-
-      // console.log('aaaaaaaaaaa',arr1)
-
-      
-
-    
-
-      // const amount_ta = arr.map(d=>d.total_amount)
-      // console.log(amount_ta,'data')
-
-      
-      // setPrintdata(dd=>[])
-      setPrintdata(search=>[...search,row])
-      // console.log('total',amount_1)
-      // setPrinttotal(search=>[...search,{product_code:code,total1:total1}])
-
-      // this.setState({
-      //   products: this.state.products.map((product, i) => (
-      //     i === index ? {...product, count: val} : product
-      //   ))
-      // })
-      // console.log('in',orginal.map((product,i)=>(
-      //   i === index
-      // )))
-      
+      console.log('total1',total1)
       setPrinttotal(orginal.map((product,i)=>(
-        i === index?{...product,count:qty_onchange}:printtotal
+        i === index?{...product,count:total1}:printtotal
       )))
     }
+    
 
     const print = async () => {
+
+      const orginal_quantity = orginal?.map(d=>d.quantity)
+      console.log('orginal',orginal_quantity)
       // On iOS/android prints the given html. On web prints the HTML from the current page.
       await Print.printAsync({
         html: createDynamicTable(),
         printerUrl: selectedPrinter?.url, // iOS only
       });
+        const url = `${app_url}/savebill`
+      Axios.post(url,{
+
+      }).then((response)=>{
+        console.log('resonse',response)
+      }).catch(err=>console.log('err',err))
     }
   
     const printToFile = async () => {
@@ -436,6 +444,8 @@ const handleclose =()=>{
         </tr>
         `
       }
+
+
       console.log(table);
       const html = `
       <!DOCTYPE html>
@@ -496,23 +506,91 @@ const handleclose =()=>{
 //       sum += i.count * i.price
 //     ), 0)}
 //   </Text>
-// )
+// )\\
+
+
+const handlemobile =(e)=>{
+  // console.log('weeeeee',e)
+
+
+  const mobile = e
+
+  if(mobile.length==10){
+    // console.log('enter')
+    setmobileerror('')
+    setMobile(mobile)
+  }else{
+    // console.log('exit')
+    setmobileerror('plz enter 10 digit number')
+
+    
+  }
+}
+
+const handlelogout = ()=>{
+  navigation.navigate('Login')
+
+}
 
 const flat_method = printtotal.flat()
- console.log('Total_232',flat_method.reduce((sum, i) => (
-    // sum += parseInt(i.count * i.amount)
+//  console.log('Total_232',flat_method.reduce((sum, i) => (
+//     // sum += parseInt(i.count * i.amount)
 
-    typeof(parseInt(i.amount))
+//     typeof(parseInt(i.amount))
     
-  // sum += parseInt(i.count * i.amount)
-), 0))
+//   // sum += parseInt(i.count * i.amount)
+// ), 0))
 
-const sum = flat_method.reduce((accumulator, object) => {
-  // console.log('acccc',accumulator)
-  return  parseInt (accumulator+object.count + object.amount);
-}, 0);
+// const sum = flat_method.reduce((accumulator, object) => {
+//   // console.log('acccc',accumulator)
+//   return  parseInt (accumulator+object.count + object.amount);
+// }, 0);
 
-  console.log('printtotal',sum)
+let aa = []
+aa.push(qty_onchange)
+
+
+   const valuesset = Object.values(qty_onchange)
+   const sum = valuesset?.reduce((partialSum, a) => partialSum + a, 0);
+console.log('sum',sum);
+var ttt = '';
+const yyy = []
+
+for (let i in qty_onchange) {
+  const item = qty_onchange[i];
+  yyy.push(item)
+  ttt = item
+  // console.log('ite,',item)
+ 
+}
+
+      const handlecustomername =(e)=>{
+        // console.log('eeeee',e)
+
+        if(e==''){
+          setNameerror('plz enter name')
+        }else{
+          setCustomername(e)
+          setNameerror('')
+        }
+      }
+
+// const data_10 = orginal?.filter((e,i)=>{
+//  console.log('e',e)
+// })
+
+// const rrremo = obj.Results.splice(-1);
+
+let updateee = []
+
+        updateee.push(updatestate)
+
+
+
+   console.log('vvvvvvvvvvvv',updateee)
+
+  // console.log('printtotal',yyy.forEach(y=>console.log('oooooo',y)))
+  // console.log(Object.values(qty_onchange))
 
   return (
     <ImageBackground source={wood2} style={{height:850}}>
@@ -524,10 +602,27 @@ const sum = flat_method.reduce((accumulator, object) => {
               <View style={{width:200,marginLeft:60}}>
               <Field  placeholder='product code'    onChangeText={handleproduct}/>
 
-              </View>
+              
             <View>
               <Text style={{color:'red'}}>{productcodeerror}</Text>
             </View>
+
+            <Field  keyboardType={'numeric'} maxLength={10} placeholder='Contact Number'    onChangeText={handlemobile}/>
+
+            <Text style={{color:'red'}}>{mobileerror}</Text>
+
+            <Field   placeholder='Customer Name'    onChangeText={handlecustomername}/>
+
+            <Text style={{color:'red',backgroundColor:'white',fontSize:20,marginRight:30,textAlign:'center'}}>{nameerror}</Text>
+
+            </View>
+            {/* <TextInput placeholder="Contact Number"   placeholderTextColor="#60605e"
+          numeric
+          keyboardType={'numeric'} maxLength={10} onChangeText={handlemobile} style={{ backgroundColor:'white',textAlign:'center'  ,color:'black',width:300,borderRadius:30,borderColor:'black',borderWidth:2,borderStartColor:'red'}} /> */}
+
+          {/* <View>
+            <Text style={{color:'red'}}>{mobileerror}</Text>
+          </View> */}
             {/* <Field  placeholder='Quantity'  onChangeText={handleqtyfield}/>
             <View>
               <Text style={{color:'red'}}>{quantityerror}</Text>
@@ -554,18 +649,14 @@ const sum = flat_method.reduce((accumulator, object) => {
 
     search_complete?
     <View>
-    <DataTable.Header style={{
-flex: 2,
-flexWrap: 'wrap',
-borderColor: 'black',
-borderWidth: 4,
+    <DataTable.Header  style={{
+borderColor: 'green',
+borderWidth: 2,
 width:390,
 overflow: 'visible',
-// marginLeft:10,
 backgroundColor:'white',
-// padding: 10
-
-}}>
+fontSize: 50, fontWeight: 'bold',
+padding: 10}}>
 <DataTable.Title>product code</DataTable.Title>
 <DataTable.Title>product title</DataTable.Title>
 <DataTable.Title>amount</DataTable.Title>
@@ -599,8 +690,10 @@ padding: 10
 <DataTable.Cell>{data.product_title}</DataTable.Cell>
 <DataTable.Cell>{data.amount}</DataTable.Cell>
 <DataTable.Cell>{data.quantity}</DataTable.Cell>
-<DataTable.Cell  style={{flex: 1}}><TextInput style={{backgroundColor:'white',width:55}} onBlur={()=>handleprintdata(data,total,data.product_code,index)} onChangeText={(e)=>handleqty_change(data.product_code,data.quantity,e,data.amount)}/></DataTable.Cell>
-     <DataTable.Cell>{total}</DataTable.Cell>
+<DataTable.Cell  style={{flex: 1}}><TextInput style={{backgroundColor:'white',width:55}} onBlur={()=>handleprintdata(data,total,data.product_code,index)} onChangeText={(e)=>handleqty_change(data.product_code,data.quantity,e,data.amount,index)}/></DataTable.Cell>
+     
+{updateee.map(d=> <DataTable.Cell >{d}</DataTable.Cell>)}
+     {/* <DataTable.Cell>{sum}</DataTable.Cell> */}
 
 </DataTable.Row>
 {/* </ScrollView> */}
@@ -618,14 +711,9 @@ padding: 10
 }
 
 
-{search_complete?<View style={{alignItems:'center',padding:10}}>
-<Text>
-    Price: 
-    {printtotal.reduce((sum, i) => (
-      sum += i.count * i.amount
-    ), 0)}
-  </Text>
-        <Text style={{color:'green',backgroundColor:'white',width:100,height:30}}>Total:{new_data}</Text>
+{search_complete?<View style={{alignItems:'center',padding:10,display:'flex'}}>
+
+        <Text style={{color:'white',backgroundColor:'green',width:100,height:30,marginLeft:280}}>Total:{sum}</Text>
       </View>:''}
 
 
@@ -633,9 +721,10 @@ padding: 10
   {/* <Btn btnLabel='print' bgColor={green}/> */}
   {/* <Button style={{backgroundColor:'white',padding:10}} onPress={()=>handleclose}> Cancel</Button> */}
   {/* <Divider/> */}
-  <Btn btnLabel='print' Press={print} bgColor='white'  /> 
-  <Btn btnLabel='Print to PDF file' Press={printToFile} bgColor='white'/>
+  <Btn btnLabel='print' disabled={search_complete===false||product_code==''||productcodeerror!==''||nameerror!==''||Customer==''} Press={print} bgColor={search_complete==true?'white':'white'}  /> 
+  <Btn btnLabel='Print to PDF file' disabled={search_complete===true} Press={printToFile} bgColor='white'/>
   <Btn  btnLabel='cancel' Press={handleclose} bgColor='red' />
+  <Btn  btnLabel='Logout' Press={handlelogout} bgColor='red' />
 
 
 </View>

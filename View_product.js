@@ -1,26 +1,11 @@
 import  { useEffect, useState } from 'react';
 import *as React from 'react'
-import {View, Text, Touchable, TouchableOpacity, TextInput,StyleSheet, ScrollView,Modal,Pressable,ImageBackground} from 'react-native';
+import {View, Text, Touchable, TouchableOpacity, TextInput,StyleSheet, ScrollView,Modal,Pressable,ImageBackground,ToastAndroid} from 'react-native';
 import Axios from 'axios';
-// import { DataTable } from 'react-native-paper';
 import {  DataTable ,Button} from 'react-native-paper';
-// import { Button } from 'antd';
 import QRCode from 'react-native-qrcode-svg';
-// import { ScrollView } from 'react-native-gesture-handler';
 import 'react-native-gesture-handler';
-import { SafeAreaView } from 'react-native-safe-area-context';
-// import QRCode from 'react-qr-code';
-// import { Table } from 'react-native-table-component';
-// import { Table, Row, Rows } from 'react-native-table-component';
-// import {Modal} from "react-native-modal";
-import Background from './Background';
 import wood2 from './wood2.png'
-// import Navbar from './Navbar';
-// import MyComponent from './MyComponent';
-// import RNFetchBlob from 'rn-fetch-blob';
-// import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as FileSystem from "expo-file-system";
-// import * as MediaLibrary from "expo-media-library";
 import * as MailComposer from 'expo-mail-composer';
 import * as Print from 'expo-print';
 import { shareAsync } from 'expo-sharing';
@@ -30,8 +15,6 @@ import { app_url } from './Ipaddress';
 
 
 
-
-// let svg = useRef<SVG>(null)
 const View_product =()=>{
     const [product,setProduct] = useState([])
     const [qr,setqr] = useState([])
@@ -192,7 +175,27 @@ const View_product =()=>{
       Axios.post(url,{
           id:id
       }).then((response)=>{
-        console.log('========',response?.data?.results)
+        console.log('========',response?.data?.results?.affectedRows)
+
+        const deleted =  response?.data?.results?.affectedRows 
+
+        if(deleted==1){
+          ToastAndroid.showWithGravityAndOffset(
+            "Product deleted sucessfully ",
+            ToastAndroid.LONG,
+            ToastAndroid.TOP,
+            25,
+            50
+          );
+        }else{
+          ToastAndroid.showWithGravityAndOffset(
+            "Plz try again ",
+            ToastAndroid.LONG,
+            ToastAndroid.TOP,
+            25,
+            50
+          );
+        }
       }).catch(err=>console.log('errrrr',err))
 
 
@@ -217,39 +220,9 @@ const View_product =()=>{
       productQRref?.toDataURL( data =>{
         setBlobimage(data)
   
-        // console.log('data ',data)
-        // const QRCodeImg = FileSystem.documentDirectory + "QRCode.png";
-        // await FileSystem.writeAsStringAsync(QRCodeImg, data, { encoding: FileSystem.EncodingType.Base64 })
-        // MediaLibrary.saveToLibraryAsync(QRCodeImg)
-        // .then(()=> ))
-        // .catch(console.error)
       })
 
-      console.log(blobimage,'oooooooooooo')
       
-          console.log('enter 2')
-      // productQRref?.toDataURL( data =>{
-      //   setBlobimage(data)
-  
-      //   // console.log('data ',data)
-      //   // const QRCodeImg = FileSystem.documentDirectory + "QRCode.png";
-      //   // await FileSystem.writeAsStringAsync(QRCodeImg, data, { encoding: FileSystem.EncodingType.Base64 })
-      //   // MediaLibrary.saveToLibraryAsync(QRCodeImg)
-      //   // .then(()=> ))
-      //   // .catch(console.error)
-      // })
-      // console.log('dataurl',blobimage)
-      // On iOS/android prints the given html. On web prints the HTML from the current page.
-      // productQRref.toDataURL(async data =>{
-
-      //   setBlobimage(data)
-
-      //   // const QRCodeImg = FileSystem.documentDirectory + "QRCode.png";
-      //   // await FileSystem.writeAsStringAsync(QRCodeImg, data, { encoding: FileSystem.EncodingType.Base64 })
-      //   // MediaLibrary.saveToLibraryAsync(QRCodeImg)
-      //   // .then(()=> ))
-      //   // .catch(console.error)
-      // })
     
       await Print.printAsync({
         html: createDynamicTable(),
@@ -270,17 +243,7 @@ const View_product =()=>{
       const printer = await Print.selectPrinterAsync(); // iOS only
       setSelectedPrinter(printer);
     }
-    // const blobimages =  productQRref?.toDataURL( data =>{
-    //   data
-
-    //   // console.log('data ',data)
-    //   // const QRCodeImg = FileSystem.documentDirectory + "QRCode.png";
-    //   // await FileSystem.writeAsStringAsync(QRCodeImg, data, { encoding: FileSystem.EncodingType.Base64 })
-    //   // MediaLibrary.saveToLibraryAsync(QRCodeImg)
-    //   // .then(()=> ))
-    //   // .catch(console.error)
-    // })
-    // console.log('eeeeeee',blobimages)
+    
  
      productQRref?.toDataURL( data =>{
       setBlobimage(data)
@@ -355,7 +318,7 @@ const View_product =()=>{
 
    
     return(
-          <ImageBackground source={wood2}>
+          <ImageBackground style={{height:870}} source={wood2}>
         <View style={{marginTop:30}}>
           <ScrollView>
              <DataTable.Header  style={styles.header}>

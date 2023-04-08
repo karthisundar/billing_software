@@ -20,6 +20,7 @@ const Login = ({navigation}) => {
     const [Email,setEmail]= useState('')
     const [passworderror,setPassworderror] = useState('')
     const [password,setPassword] = useState('')
+    const [loginuser,setloginuser] = useState([])
 
 
     const handlepassword =(e)=>{
@@ -110,17 +111,22 @@ else
         // navigation.replace('Home')
         // navigation.navigate('Home')
         if(userId == 1){
-          navigation.navigate('add_product')
+          navigation.navigate('add_product',{
+            loginuser:loginuser
+          })
+          setloginuser(user_data)
           // AsyncStorage.setItem('user', 'Login')
 
         }else{
           navigation.navigate('barcode')
+          setloginuser(user_data)
+
         }
         // localStorage.setItem('')
         
 
       }else{
-        // console.log('enterelse')
+        alert('user not found')
       }
      }).catch(error=>console.log('e',error))
 
@@ -132,7 +138,7 @@ else
     }
 // console.log('name',password)
 
-// console.log('app_url',app_url)
+// console.log('app_url',loginuser)
 
   return (
     <ImageBackground source={wood2}>

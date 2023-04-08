@@ -80,6 +80,15 @@ app.post('/productdelete',function(req,res){
 
     console.log('id',id)
 
+    db.query(`delete from product p where p.id  = ${id}`,(err,result)=>{
+        if(err){
+            console.log('err',err)
+        }else{
+            res.send({message:"sucess",results:result,errors:err})
+            console.log("result",result)
+        }
+    })
+
     
 })
 
@@ -113,12 +122,14 @@ app.post(`/product`,(req,res)=>{
     const amount = formdata.map(f=>f.amount)
     // const quantity = formdata.map(j.quantity)
     const qty = formdata.map(s=>s.product_qty,product)
+    const count = 0
+
 
     console.log("formdata",qty,)
 
     // const query_data = `insert into product (product_code,product_title,amount,quantity) values(?,?,?,?)`,[product_code_1,product,amount,quantity],(err,result)
 
-    db.query(`insert into product (product_code,product_title,amount,quantity) values(?,?,?,?)`,[product_code_1,product,amount,qty],(err,result)=>{
+    db.query(`insert into product (product_code,product_title,amount,quantity,count_new) values(?,?,?,?,?)`,[product_code_1,product,amount,qty,count],(err,result)=>{
         if(err){
             console.log("hhhh",err)
         
@@ -162,9 +173,10 @@ app.post('/signup',(req,res)=>{
     const email = formdata[0].Email
     const password = formdata[0].password
     const usertype = formdata[0].userType
+    const mobilenumber = formdata[0].mobilenumber
 
     
-    db.query(`insert into usermaster (first_name,last_name,email_address,password_new,user_typeid) values(?,?,?,?,?)`,[first_name,lastname,email,password,usertype],(err,result)=>{
+    db.query(`insert into usermaster (first_name,last_name,email_address,password_new,user_typeid,mobilenumber) values(?,?,?,?,?,?)`,[first_name,lastname,email,password,usertype,mobilenumber],(err,result)=>{
         if(err){
             console.log("hhhh",err)
         
@@ -251,6 +263,10 @@ app.post('/updateproduct_search',(req,res)=>{
 
         }
     })
+})
+
+app.post('/savebill',(req,res)=>{
+    
 })
 
 

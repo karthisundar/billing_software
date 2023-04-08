@@ -1,14 +1,26 @@
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import Barcode from './Barcode';
-import Login from './Login';
+import * as React from 'react';
+import { Drawer } from 'react-native-paper';
+import {createDrawerNavigator} from '@react-navigation/drawer';
 
-const Tab = createBottomTabNavigator();
+const Drawer_1 = createDrawerNavigator();
 
-export default function Navbar() {
+const Navbar = () => {
+  const [active, setActive] = React.useState('');
+
   return (
-    <Tab.Navigator>
-      <Tab.Screen name="login" component={Login} />
-      <Tab.Screen name="barcode" component={Barcode} />
-    </Tab.Navigator>
+    <Drawer.Section title="Some title">
+      <Drawer.Item
+        label="First Item"
+        active={active === 'first'}
+        onPress={() => setActive('first')}
+      />
+      <Drawer.Item
+        label="Second Item"
+        active={active === 'second'}
+        onPress={() => setActive('second')}
+      />
+    </Drawer.Section>
   );
-}
+};
+
+export default Navbar;

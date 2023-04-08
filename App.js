@@ -11,6 +11,8 @@ import Add_product from './Add_product';
 import View_product from './View_product';
 import Barcode from './Barcode';
 import Editproduct from './Editproduct';
+import SearchBill from './SearchBill';
+import Logout from './Logout';
 
 
 
@@ -29,6 +31,8 @@ export default function App() {
       {/* <Stack.Screen name = 'barcode' component={Barcode}/> */}
       <Stack.Screen name = 'barcode' component={Barcode}/>
       <Stack.Screen name = 'edit_product' component={Editproduct}/>
+      <Stack.Screen name = 'searchbill' component={SearchBill}/>
+      <Stack.Screen name = 'logout'   component={Logout}/>
 
     </Stack.Navigator>
   </NavigationContainer>

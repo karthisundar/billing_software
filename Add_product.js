@@ -7,10 +7,13 @@ import { darkGreen, green,black,red } from './Constants';
 import Axios from 'axios';
 import wood2 from './wood2.png'
 import { app_url } from './Ipaddress';
+import Logout from './Logout';
 
 
 
-const Add_product = ({navigation})=>{
+const Add_product = ({route,navigation})=>{
+    const {loginuser} = route.params
+
 
     const [product_code,setProductcode] = useState('')
     const [product_codeerror,setProducterror] = useState('')
@@ -83,7 +86,7 @@ const handlesubmit=()=>{
     let formdata = []
     formdata.push({product_code:product_code,product_title:product_title,product_qty:product_qty,amount:amount})
 
-    console.log(formdata,'okokokoko')
+    // console.log(formdata,'okokokoko')
 
     const url = 'http://192.168.0.104:7001/product'
 
@@ -110,7 +113,16 @@ const handlesubmit=()=>{
 
 const ViewProduct =()=>{
 
-    navigation.navigate('view_product')
+    navigation.navigate('view_product',{
+        loginuser:loginuser
+    })
+
+}
+
+const handlesearchBill =()=>{
+    navigation.navigate('searchbill',{
+        loginuser:loginuser
+    })
 
 }
 
@@ -137,23 +149,23 @@ const clear = ()=>{
     setAmount('')
 }
 
-        const product_edit = (e)=>{
-            console.log('eee',e)
-            const id = e
-            if(id!==''){
-                setProduct(e)
-            }else{
-                // console.log('exit')
-            }
-        }
+        
 
         const handlesearch_product = ()=>{
             console.log('enter',search_product)
-    navigation.navigate('edit_product')
+    navigation.navigate('edit_product',{
+        loginuser:loginuser
+    })
 
 
             
         }
+
+          const handlelogout =()=>{
+            navigation.navigate('Login')
+        }
+
+        // console.log('login',loginuser)
 
     return(
         <ScrollView>
@@ -209,17 +221,20 @@ const clear = ()=>{
 
             <Btn bgColor={(product_codeerror!==''||productqtyerror!==''||titleError!==''||amount_error!=='')||(product_code==''&&product_title==''&&product_qty==''&&amount=='')?green:black} textColor='white' disabled={(product_codeerror!==''||productqtyerror!==''||titleError!==''||amount_error!=='')||(product_code==''&&product_title==''&&product_qty==''&&amount=='')} btnLabel="Save" Press={handlesubmit} />
 
+            <Btn bgColor={green} textColor='white' Press={handlesearchBill} btnLabel="Search Bill"  />
 
-            <Btn bgColor={black} textColor='white' btnLabel="View Product" Press={ViewProduct} />
-
-           
+            <Btn bgColor={black} textColor='white' btnLabel="View Product" Press={ViewProduct} />          
 
 
-            <Btn bgColor={red} textColor='white' btnLabel="Clear" Press={clear} />
 
 
             <Btn bgColor={black} textColor='white' Press={handlesearch_product} btnLabel="Edit Product"  />
-           
+
+
+           {/* <Logout/> */}
+           <Btn bgColor={red} textColor='white' btnLabel="Clear" Press={clear} />
+
+           <Btn btnLabel='Logout' bgColor={red} textColor='white' Press={handlelogout}/>
             
         </View>
         </ImageBackground>
