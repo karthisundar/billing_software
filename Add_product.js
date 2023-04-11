@@ -8,6 +8,8 @@ import Axios from 'axios';
 import wood2 from './wood2.png'
 import { app_url } from './Ipaddress';
 import Logout from './Logout';
+import { Checkbox,RadioButton } from 'react-native-paper';
+
 
 
 
@@ -25,6 +27,7 @@ const Add_product = ({route,navigation})=>{
     const [amount_error,setAmountError] = useState('')
     const [search_product , setProduct] = useState('')
     const [editproduct,setEditproduct] = useState([])
+    const [checked,setChecked] = useState('')
     
 
     const handleproductcode =(e)=>{
@@ -83,8 +86,12 @@ const handleamount = (e)=>{
 
 
 const handlesubmit=()=>{
+
+
+    let product_type = checked == 0 ? 'kg':"qty"
+
     let formdata = []
-    formdata.push({product_code:product_code,product_title:product_title,product_qty:product_qty,amount:amount})
+    formdata.push({product_code:product_code,product_title:product_title,product_qty:product_qty,amount:amount,product_type:product_type})
 
     // console.log(formdata,'okokokoko')
 
@@ -165,6 +172,17 @@ const clear = ()=>{
             navigation.navigate('Login')
         }
 
+        const handlecheckbox =(e)=>{
+                console.log('e0',e)
+                if(e=='KG'){
+                    console.log('enter')
+                    setChecked(0)
+                  }else{
+                    setChecked(1)
+            
+                  }
+        }
+
         // console.log('login',loginuser)
 
     return(
@@ -216,6 +234,18 @@ const clear = ()=>{
              <Text  style={{color:'red'}}>
                 {amount_error}
             </Text>
+
+
+            <RadioButton.Group onValueChange={handlecheckbox} >
+      <View style={{alignItems:'center',backgroundColor:'white',width:300}}>
+        <Text>Kg</Text>
+        <RadioButton status={checked==0?'checked':'unchecked'} value='KG' />
+      </View>
+      <View style={{alignItems:'center',backgroundColor:'white',width:300}}>
+        <Text>qty</Text>
+        <RadioButton  status={checked==1?'checked':'unchecked'} value='QTY' />
+      </View>
+    </RadioButton.Group>
 
             {/* <button>Save</button> */}
 

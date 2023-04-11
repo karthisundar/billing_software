@@ -123,13 +123,14 @@ app.post(`/product`,(req,res)=>{
     // const quantity = formdata.map(j.quantity)
     const qty = formdata.map(s=>s.product_qty,product)
     const count = 0
+    const product_type = formdata.map(e=>e.product_type)
 
 
     console.log("formdata",qty,)
 
     // const query_data = `insert into product (product_code,product_title,amount,quantity) values(?,?,?,?)`,[product_code_1,product,amount,quantity],(err,result)
 
-    db.query(`insert into product (product_code,product_title,amount,quantity,count_new) values(?,?,?,?,?)`,[product_code_1,product,amount,qty,count],(err,result)=>{
+    db.query(`insert into product (product_code,product_title,amount,quantity,count_new,product_type) values(?,?,?,?,?,?)`,[product_code_1,product,amount,qty,count,product_type],(err,result)=>{
         if(err){
             console.log("hhhh",err)
         
@@ -249,12 +250,14 @@ app.post('/updateproduct_search',(req,res)=>{
     const {formdata} = req.body
     console.log('formsss',formdata)
 
-    const total_amount = formdata[0].total
+    const toal_qty = formdata[0].total
     const quantity = formdata[0].quantity
     const product_code = formdata[0].product_code
-    console.log("total_amoun",total_amount)
+    const amount = formdata[0].amount
+    console.log("total_amoun",formdata[0].amount)
+    
 
-    db.query(`UPDATE  product as p SET p.amount = ${total_amount} , p.quantity  = ${quantity} where p.product_code = ${product_code}`,(err,result)=>{
+    db.query(`UPDATE  product as p SET p.amount = ${amount} , p.quantity  = ${toal_qty} where p.product_code = ${product_code}`,(err,result)=>{
         if(err){
             console.log('err',err)
         }else{

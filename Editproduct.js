@@ -184,19 +184,21 @@ export default function Editproduct(){
     }
 
     const handleupdate=()=>{
-        console.log('eeeeee')
+        // console.log('eeeeee')
 
        const qty_s =  parseInt(editproduct[0].quantity)
 
        const qty_state = parseInt(qty)
 
        const total =parseInt( qty_state+qty_s)
+       console.log('total',total)
+       console.log('amount',amount)
 
-       console.log('totot',editproduct[0].product_code)
+    //    console.log('totot',editproduct[0].product_code)
 
        const formdata = []
 
-       formdata.push({total:total,quantity:qty,product_code:editproduct[0].product_code})
+       formdata.push({total:total,quantity:qty,product_code:editproduct[0].product_code,amount:amount})
        console.log('formdata',formdata)
 
        const url = `${app_url}/updateproduct_search`
@@ -204,7 +206,7 @@ export default function Editproduct(){
        Axios.post(url,{
         formdata:formdata
        }).then((response)=>{
-        // console.log('responsedta',response?.data?.results?.affectedRows)
+        console.log('responsedta',response?.data?.results)
         const affected_rows = response?.data?.results?.affectedRows
 
         if(affected_rows==1){
@@ -230,7 +232,7 @@ export default function Editproduct(){
 
     }
 
-    // console.log("editproduct",editproduct[0]?.product_code)
+    // console.log("editproduct",editproduct)
     return(
         <ImageBackground style={styles.image} source={wood2}>
         <View>
@@ -354,7 +356,7 @@ padding: 10
             
             />
             <View style={{paddingTop:10}} >
-            <Text style={{color:'black',textAlign:'center',fontSize:15,fontWeight:'800'}} >Old Amount: {editproduct[0].amount}</Text>
+            <Text style={{color:'black',textAlign:'center',fontSize:15,fontWeight:'800'}} >Old Amount: {editproduct[0]?.amount}</Text>
 
             </View>
             <View>
@@ -374,7 +376,7 @@ padding: 10
             
             />
                <View style={{paddingTop:10}} >
-            <Text style={{color:'black',textAlign:'center',fontSize:15,fontWeight:'800'}} >Available qty: {editproduct[0].quantity}</Text>
+            <Text style={{color:'black',textAlign:'center',fontSize:15,fontWeight:'800'}} >Available qty: {editproduct[0]?.quantity}{editproduct[0]?.product_type}</Text>
 
             </View>
              <View>
