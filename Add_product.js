@@ -95,10 +95,11 @@ const handlesubmit=()=>{
 
     // console.log(formdata,'okokokoko')
 
-    const url = 'http://192.168.0.104:7001/product'
+    const url = `${app_url}/product`
 
     Axios.post(url,{
-        formdata
+        formdata,
+        loginuser:loginuser
     }).then((res)=>{
         // console.log('response',res?.data.results?.affectedRows)
 
@@ -144,7 +145,7 @@ const handlesearchBill =()=>{
 const styles = StyleSheet.create({
 
     input:{
-        backgroundColor:'white',textAlign:'center'  ,color:'black',width:300,borderRadius:30,borderColor:'black',borderWidth:2,borderStartColor:'red'
+        backgroundColor:'white',textAlign:'center'  ,color:'black',width:300,borderRadius:30,borderColor:'black',borderWidth:2,borderStartColor:'red',height:35
     }
 })
 
@@ -206,7 +207,7 @@ const clear = ()=>{
              <TextInput 
             onChangeText={handleqty}
             style={styles.input}
-            placeholder="peoduct qutatity"
+            placeholder="product qutatity"
             value={product_qty}
             // tyoe="number"
             />
@@ -237,11 +238,11 @@ const clear = ()=>{
 
 
             <RadioButton.Group onValueChange={handlecheckbox} >
-      <View style={{alignItems:'center',backgroundColor:'white',width:300}}>
+      <View style={{alignItems:'center',backgroundColor:'lightyellow',width:300}}>
         <Text>Kg</Text>
         <RadioButton status={checked==0?'checked':'unchecked'} value='KG' />
       </View>
-      <View style={{alignItems:'center',backgroundColor:'white',width:300}}>
+      <View style={{alignItems:'center',backgroundColor:'lightyellow',width:300}}>
         <Text>qty</Text>
         <RadioButton  status={checked==1?'checked':'unchecked'} value='QTY' />
       </View>
@@ -262,9 +263,9 @@ const clear = ()=>{
 
 
            {/* <Logout/> */}
-           <Btn bgColor={red} textColor='white' btnLabel="Clear" Press={clear} />
+           <Btn bgColor='tomato' textColor='black' btnLabel="Clear" Press={clear} />
 
-           <Btn btnLabel='Logout' bgColor={red} textColor='white' Press={handlelogout}/>
+           <Btn btnLabel='Logout' bgColor='tomato' textColor='black' Press={handlelogout}/>
             
         </View>
         </ImageBackground>

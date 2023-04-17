@@ -10,6 +10,8 @@ import {
   ToastAndroid,
   ImageBackground,
   Platform,
+  FlatList,
+  SafeAreaView
 } from "react-native";
 import { Divider, TextInput } from "react-native-paper";
 import Field from "./Field";
@@ -29,8 +31,14 @@ import { shareAsync } from "expo-sharing";
 // import RNFetchBlob from 'rn-fetch-blob';
 // import { json } from 'express';
 // import Navbar from './Navbar'
+// import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-table-component';
 
-export default function Barcode({ navigation }) {
+
+
+
+export default function Barcode({ navigation,route }) {
+  const {loginuser} = route.params
+
   const [product_code, setProductcode] = useState("");
   const [productcodeerror, setProducterror] = useState("");
   const [search_product, setSearch] = useState([]);
@@ -65,16 +73,18 @@ export default function Barcode({ navigation }) {
   const [updatestate, setUpdate] = useState([]);
 
   var new_table = "";
-  for (let i in printdata) {
-    const item = printdata[i];
+  for (let i in orginal) {
+    const item = orginal[i];
     new_table =
       new_table +
       `
-  <tr>
-    <td>${item.product_title}</td>
-    <td>${item.quantity}</td>
-    <td>${item.product_code}</td>
-  </tr>
+      <tr>
+      <td>${item.product_code}</td>
+      <td>${item.product_title}</td>
+      <td>${item.amount}  </td>
+      <td>${item.net_qty}</td>
+      <td>${item.count_new}</td>
+    </tr>
   `;
   }
 
@@ -83,19 +93,23 @@ export default function Barcode({ navigation }) {
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
   </head>
-  <body style="text-align: center;">
-    <h1 style="font-size: 50px; font-family: Helvetica Neue; font-weight: normal;">
-      Hello World!
-    </h1>
-    <table>
-    <tr>
-      <th>product title</th>
-      <th>quantity</th>
-      <th>product code</th>
-    </tr>
-    ${new_table}
-  </table>
-  </body>
+  <body>
+        <div>
+        <h2>Billing </h2>
+        </div>
+        <table>
+          <tr>
+            <th>Product code</th>
+            <th>Product Title</th>
+            <th>Amount</th>
+            <th>Net qty </th>
+            <th>Sub total </th>
+          </tr>
+          ${new_table}
+        </table>
+        <h1>Total amount:${sum} </h1>
+        
+        </body>
 </html>
 `;
   const askForCameraPermission = () => {
@@ -109,7 +123,10 @@ export default function Barcode({ navigation }) {
   useEffect(() => {
     askForCameraPermission();
 
-    const data_set =  orginal?.map(data=>({...data,total:updatestate}))
+
+
+    const data_set =  orginal?.map(data=>({...data,total:overall}))
+    
 
 
     // console.log('from correct',data_set)
@@ -284,8 +301,13 @@ export default function Barcode({ navigation }) {
     setPrinttotal([]);
   };
 
-  const handleqty_change = (e, quantitys, data, amount, index) => {
-    console.log("indes", e);
+  
+
+  const handleqty_change = (e, quantitys, data, amount, index,array,count_new) => {
+    // console.log("indes", quantitys,'okokokokokoko',data);
+
+
+    // console.log("orginal",orginal)
 
     //   let newArr = [...orginal,data];
 
@@ -304,78 +326,98 @@ export default function Barcode({ navigation }) {
 
     //   i === index?{...product,count_new:data}:{...product}
     // )))
+    let yy = []
+   yy.push(array)
 
-    const findtype = orginal?.map(r=>r.product_type)
+    const findtype = yy?.filter(r=>r.product_type=='kg')
 
-    console.log("eeeeee0,e0", findtype);
+    const total = amount * data;
+
+    const overall = total + 0;
+
+    // overall = ''
+
+    // console.log("eeeeee0,e0", data/1000);
+    var changedqty = ''
+   var kg_total=''
+    if(findtype.length>=1){
+       kg_total = data/1000*amount
+
+       changedqty = quantitys - data
+      // console.log('enterere',kg_total)
+       
+    }else{
+
+      kg_total  =amount * data
+      changedqty = quantitys - data
+
+      // console.log('ecit')
+    }
 
     // setQty(newArr)
 
     // console.log('newewewewew',newArr)
     // console.log('rereere',qty_onchange)
-    const total = amount * data;
-
-      const overall = total + 0;
+   
 
    
 
-  const data_set =  orginal?.map(data=>({...data,total:overall}))
+  // const data_set =  yy?.map(data=>({...data,total:overall}))
 
-  // console.log(data_set,'kkjkjkjkjjkjkjk')
+// const setofdata = []
 
+// setofdata.push(...data_set)
 
+  // console.log(setofdata,'kkjkjkjkjjkjkjk')
 
-    setQty((datas) => ({
-      ...datas,
-      // ['amount']: overall,
-      [index]: overall,
-    }));
+  console.log('overall from if ',kg_total)
+ 
+
+    // setQty((datas) => ({
+    //   ...datas,
+    //   // ['amount']: overall,
+    //   [index]: overall,
+    // }));
 
     if (quantitys <= data) {
       alert("plz enter low quantity");
     } else {
       
+      const newState = [...orginal];
+      newState[index] = {
+        ...newState[index],
+        count_new:kg_total,
+        net_qty:data,
+        quantity:changedqty
+        
+      };
+    
+      console.log('newwwwwwwwww',newState)
+      setSearch(newState)
+     
+
+      // setUpdate((dd) => ({
+      //   ...dd,
+      //   [index]: overall,
+      // }));
+
+
+      // setAmount((rr)=>({
+      //   ...rr,
+      //   [e]:overall
+      // }))
+
+      // setAmount((sss)=>{
+      //   const datass = {...sss}
+      //   datass[`${index}`] = {key:overall}
+      //   return [datass]
+      // })
 
      
 
-      setUpdate((dd) => ({
-        ...dd,
-        [index]: overall,
-      }));
+      // setoverall(overall);
 
-
-      setAmount((rr)=>({
-        ...rr,
-        [e]:overall
-      }))
-
-      setAmount((sss)=>{
-        const datass = {...sss}
-        datass[`${index}`] = {key:overall}
-        return [datass]
-      })
-
-      // setAmount((state) => {
-      //   const newObject = {...state};
-      //   newObject[`${index}`] = {key: overall}
-      //   // console.log('newewewewewewewewew',newObject)
-      //   return { newObject }
-      //  });
-
-      
-
-      //  const newArray = orginal.map((item, i) => {
-      //   if (index === i) {
-      //     return { ...item, ['count_new']: overall };
-      //   } else {
-      //     return item;
-      //   }
-      // });
-      // console.log('newarray',newArray)
-
-      setoverall(overall);
-
-      setTotal(total);
+      // setTotal(total);
     }
   };
 
@@ -395,16 +437,30 @@ export default function Barcode({ navigation }) {
 
   const print = async () => {
     const orginal_quantity = orginal?.map((d) => d.quantity);
-    console.log("orginal", orginal_quantity);
+    // console.log("orginal", orginal_quantity);
+
+    // const netqty = orginal.map(d=>d.net_qty)
+
+    // const avaqty = orginal.map(f=>f.quantity)
+
+    // const invoicenumber = Math.random()
     // On iOS/android prints the given html. On web prints the HTML from the current page.
     await Print.printAsync({
       html: createDynamicTable(),
       printerUrl: selectedPrinter?.url, // iOS only
     });
     const url = `${app_url}/savebill`;
-    Axios.post(url, {})
+    Axios.post(url, {orginal:orginal,loginuser:loginuser,mobiles:mobile,Customer:Customer})
       .then((response) => {
         console.log("resonse", response);
+
+        const sucess = response?.data.results?.affectedRows
+
+        if(sucess>=1){
+          alert('bill saved')
+        }{
+          alert('something went wrong')
+        }
       })
       .catch((err) => console.log("err", err));
   };
@@ -428,15 +484,17 @@ export default function Barcode({ navigation }) {
 
   const createDynamicTable = () => {
     var table = "";
-    for (let i in printdata) {
-      const item = printdata[i];
+    for (let i in orginal) {
+      const item = orginal[i];
       table =
         table +
         `
         <tr>
-          <td>${item.product_title}</td>
-          <td>${item.quantity}</td>
           <td>${item.product_code}</td>
+          <td>${item.product_title}</td>
+          <td>${item.amount}  </td>
+          <td>${item.net_qty}</td>
+          <td>${item.count_new}</td>
         </tr>
         `;
     }
@@ -465,18 +523,20 @@ export default function Barcode({ navigation }) {
         </style>
         </head>
         <body>
-        
+        <div>
         <h2>Billing </h2>
-        
+        </div>
         <table>
           <tr>
-            <th>product title</th>
-            <th>quantity</th>
-            <th>product code</th>
+            <th>Product code</th>
+            <th>Product Title</th>
+            <th>Amount</th>
+            <th>Net qty </th>
+            <th>Sub total </th>
           </tr>
           ${table}
         </table>
-        <h1>${new_data} </h1>
+        <h1>Total amount:${sum} </h1>
         
         </body>
       </html>
@@ -535,9 +595,19 @@ export default function Barcode({ navigation }) {
   let aa = [];
   aa.push(qty_onchange);
 
-  const valuesset = Object.values(qty_onchange);
-  const sum = valuesset?.reduce((partialSum, a) => partialSum + a, 0);
-  console.log("sum", sum);
+  // const valuesset = Object.values(qty_onchange);
+  const sum = orginal?.reduce((partialSum, a) => partialSum + a.count_new, 0);
+  // let overall_sum  = parseFloat(sum.toFixed(2))
+
+  const gst = parseInt((sum * 9)/100)
+
+  
+
+  console.log("sum", sum.toFixed(2));
+
+  console.log('gst',gst)
+
+
   var ttt = "";
   const yyy = [];
 
@@ -569,12 +639,21 @@ export default function Barcode({ navigation }) {
 
   updateee.push(qty_onchange);
 
-  console.log("vvvvvvvvvvvv", amount_1);
+  // console.log("vvvvvvvvvvvv", updatestate);
 
   // const data_set =  orginal?.map(data=>({...data,total:updatestate}))
   // console.log('from useEffect',amount_1)
 
+const checked_i=(e)=>{
+  console.log('efrom checked')
+}
 
+
+const handleselect=(e,data)=>{
+  // console.log('e from omom',e)
+  console.log('data',data)
+
+}
 
   
   // console.log('printtotal',yyy.forEach(y=>console.log('oooooo',y)))
@@ -703,21 +782,28 @@ export default function Barcode({ navigation }) {
                           <DataTable.Cell style={{ flex: 1 }}>
                             <TextInput
                               style={{ backgroundColor: "white", width: 55 }}
-                              onBlur={() =>
-                                handleprintdata(
-                                  data,
-                                  total,
-                                  data.product_code,
-                                  index
-                                )
-                              }
+                              // onBlur={() =>
+                              //   handleprintdata(
+                              //     data,
+                              //     total,
+                              //     data.product_code,
+                              //     index
+                              //   )
+                              // }
+
+                              
+
+                              onSelectionChange={(e)=>handleselect(e,data)}
+                              // onChange={(e)=>checked_i(e)}
                               onChangeText={(e) =>
                                 handleqty_change(
                                   data.product_code,
                                   data.quantity,
                                   e,
                                   data.amount,
-                                  index
+                                  index,
+                                  data,
+                                  data.count_new
                                 )
                               }
                             />
@@ -725,7 +811,7 @@ export default function Barcode({ navigation }) {
 
                           {/* {updateee.map(d=> <DataTable.Cell >{d}</DataTable.Cell>)} */}
                           {/* {updateee?.map((d,ind)=><DataTable.Cell key={ind}>{d}</DataTable.Cell>)} */}
-                          <DataTable.Cell>{sum}</DataTable.Cell>
+                          <DataTable.Cell>{data.count_new}</DataTable.Cell>
                         </DataTable.Row>
                         {/* </ScrollView> */}
                       </DataTable>
@@ -768,6 +854,9 @@ export default function Barcode({ navigation }) {
                 {/* <Btn btnLabel='print' bgColor={green}/> */}
                 {/* <Button style={{backgroundColor:'white',padding:10}} onPress={()=>handleclose}> Cancel</Button> */}
                 {/* <Divider/> */}
+
+
+               
                 <Btn
                   btnLabel="print"
                   disabled={
@@ -807,7 +896,11 @@ export default function Barcode({ navigation }) {
               </View>
               <View>{/* <PrintPdf/> */}</View>
             </View>
-
+            <FlatList 
+        data={orginal}
+        renderItem={({ item }) => <Text style={styles.item}>{item.product_code}</Text>}
+        keyExtractor={(item) => item.id}
+      />
             {/* <Billing name = {qr_data} qr = {qraccess}/> */}
             <View>
               {qraccess ? (

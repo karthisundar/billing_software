@@ -11,6 +11,7 @@ import * as Print from 'expo-print';
 import { shareAsync } from 'expo-sharing';
 import Btn from './Btn';
 import { app_url } from './Ipaddress';
+import SvgQRCode from 'react-native-qrcode-svg'
 
 
 
@@ -33,6 +34,7 @@ const View_product =()=>{
     const [email, setEmail] = useState(undefined);
     const [selectedPrinter, setSelectedPrinter] = useState();
     const [blobimage,setBlobimage] = useState('')
+    const [checkid,setId] = useState([])
 
 
     // const ref = React.useRef();
@@ -112,6 +114,7 @@ const View_product =()=>{
         console.log('eeee',e)
         const filter = product.filter(d=>d.id ==e)
         console.log('id',filter)
+        // setId(filter)
         setqr(filter)
       setVisible(true)
 
@@ -119,7 +122,7 @@ const View_product =()=>{
       productQRref?.toDataURL( data =>{
         // setBlobimage(data)
         // data
-        console.log('opopopopopopopopo',data)
+        // console.log('opopopopopopopopo',data)
   
         // console.log('data ',data)
         // const QRCodeImg = FileSystem.documentDirectory + "QRCode.png";
@@ -151,7 +154,7 @@ const View_product =()=>{
       }
   
         // console.log('enter useEffect')
-        console.log('prprrrr',productQRref)
+        // console.log('prprrrr',productQRref)
       checkAvailability();
         const url = `${app_url}/view_product`
 
@@ -222,6 +225,9 @@ const View_product =()=>{
   
       })
 
+
+
+
       
     
       await Print.printAsync({
@@ -244,6 +250,7 @@ const View_product =()=>{
       setSelectedPrinter(printer);
     }
     
+    // const product_title = 
  
      productQRref?.toDataURL( data =>{
       setBlobimage(data)
@@ -256,9 +263,16 @@ const View_product =()=>{
   </head>
   <body style="text-align: center;">
     <h1 style="font-size: 50px; font-family: Helvetica Neue; font-weight: normal;">
-      Hello World!
+      QR Images
     </h1>
-    <img src="data:image/png;base64,${blobimage}">
+
+    <center>
+    <h2>Qr Image</h2>
+
+<h1>  product Title :${qr[0]?.product_title} </h1>
+
+</center>
+    <img style = "width:80px; height:50px" src="data:image/png;base64,${blobimage}">
 
 
  
@@ -301,12 +315,17 @@ const View_product =()=>{
         </style>
         </head>
         <body>
+       
         
-        <h2>HTML Table</h2>
+        <center>
+        <h2>Qr Image</h2>
+
+    <h1>  product Title :${qr[0]?.product_title} </h1>
+
+    </center>
         
-        
-        <img src="data:image/png;base64,${blobimage}">
-        
+        <img style="width:180px;height:200px ;align = center;display: block;margin :0 auto" src="data:image/png;base64,${blobimage}">
+      
         </body>
       </html>
         `;
@@ -360,7 +379,7 @@ const View_product =()=>{
             }
             {/* {product?.map((value, index) => <DataTable.Row key={index}> {product?.map(({ title }) => <DataTable.Cell key={title}>{value[title]}</DataTable.Cell>)} </DataTable.Row>)} */}
               
-<DataTable.Pagination
+{/* <DataTable.Pagination
           page={page}
           numberOfPages={1000}
           onPageChange={(page) => setPage(page)}
@@ -369,7 +388,7 @@ const View_product =()=>{
           // itemsPerPage={itemsPerPage}
           // setItemsPerPage={setItemsPerPage}
           optionsLabel={'Rows per page'}
-        />
+        /> */}
 
           
 <Modal
@@ -379,7 +398,7 @@ const View_product =()=>{
        >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <Text style={styles.modalText}>Qr</Text>
+            <Text style={styles.modalText}>QR</Text>
             <QRCode 
              size={250}
              color="black"
@@ -390,6 +409,8 @@ const View_product =()=>{
             >
 
             </QRCode>
+
+            {/* <SvgQRCode  value="hello world" size={100} /> */}
             <View>
               
          <Btn btnLabel='print' Press={print} bgColor='white'  /> 

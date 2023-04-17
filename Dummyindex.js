@@ -112,7 +112,7 @@ app.post(`/product`,(req,res)=>{
 
     // const Email=req.body.email;
 
-    const  {formdata,loginuser} = req.body
+    const  {formdata} = req.body
     console.log('forrrrr',formdata)
 
     // const product_code_1 = formdata.map(d=>d.product_code)
@@ -123,19 +123,13 @@ app.post(`/product`,(req,res)=>{
     // const quantity = formdata.map(j.quantity)
     const qty = formdata.map(s=>s.product_qty,product)
     const count = 0
-    const product_type = formdata.map(d=>d.product_type)
 
 
-    console.log("formdata",loginuser)
-
-    const firstname = loginuser.map(d=>d.first_name)
-    const email = loginuser.map(d=>d.email_address)
-    const mobile = loginuser.map(d=>d.mobilenumber)
-    const message = `product saved by${firstname,email}` 
+    console.log("formdata",qty,)
 
     // const query_data = `insert into product (product_code,product_title,amount,quantity) values(?,?,?,?)`,[product_code_1,product,amount,quantity],(err,result)
 
-    db.query(`insert into product (product_code,product_title,amount,quantity,count_new,product_type) values(?,?,?,?,?,?)`,[product_code_1,product,amount,qty,count,product_type],(err,result)=>{
+    db.query(`insert into product (product_code,product_title,amount,quantity,count_new) values(?,?,?,?,?)`,[product_code_1,product,amount,qty,count],(err,result)=>{
         if(err){
             console.log("hhhh",err)
         
@@ -144,15 +138,6 @@ app.post(`/product`,(req,res)=>{
         }else{
             res.send({message:"sucess",results:result,errors:err})
             // console.log("result",result)
-        }
-    })
-
-    db.query(`insert into auditlog (firstname,email,mobile,message) values(?,?,?,?)`,[firstname,email,mobile,message],(err,results)=>{
-        if(err){
-            res.status(500).send({message:"error",errors:err})
-
-        }else{
-            console.log('resiult2nd',results)
         }
     })
    
@@ -261,18 +246,13 @@ app.post('/qrsearch',(req,res)=>{
 })
 
 app.post('/updateproduct_search',(req,res)=>{
-    const {formdata,loginuser} = req.body
+    const {formdata} = req.body
     console.log('formsss',formdata)
 
     const total_amount = formdata[0].total
     const quantity = formdata[0].quantity
     const product_code = formdata[0].product_code
     console.log("total_amoun",total_amount)
-    const firstname = loginuser.map(d=>d.first_name)
-    const email = loginuser.map(d=>d.email_address)
-    const mobile = loginuser.map(d=>d.mobilenumber)
-    const message = `product updated by${firstname,email}` 
-
 
     db.query(`UPDATE  product as p SET p.amount = ${total_amount} , p.quantity  = ${quantity} where p.product_code = ${product_code}`,(err,result)=>{
         if(err){
@@ -283,89 +263,9 @@ app.post('/updateproduct_search',(req,res)=>{
 
         }
     })
-
-
-    db.query(`insert into auditlog (firstname,email,mobile,message) values(?,?,?,?)`,[firstname,email,mobile,message],(err,results)=>{
-        if(err){
-            res.status(500).send({message:"error",errors:err})
-
-        }else{
-            console.log('resiult2nd',results)
-        }
-    })
 })
 
 app.post('/savebill',(req,res)=>{
-    const {orginal,loginuser,Customer,mobiles} = req.body
-
-   const  product_code = orginal.map(e=>e.product_code)
-   const product_title = orginal.map(r=>r.product_title)
-   const amount =  orginal.map(i=>i.count_new)
-   const net_qty  = orginal.map(u=>u.net_qty)
-   const product_type = orginal.map(j=>j.product_type)
-
-   const firstname = loginuser.map(d=>d.first_name)
-    const email = loginuser.map(d=>d.email_address)
-    // const mobile = loginuser.map(d=>d.mobilenumber)
-    const mobile = '99876543210'
-    const message = `Bill Saved by${firstname,email}` 
-
-
-    console.log('mobile',mobile)
-
-
-    if(orginal.length>=1){
-        db.query(`select * from userbill order by id desc limit 1`,(err,result)=>{
-            if(err){
-                console.log('no data found')
-                bill_no = 0
-            }else{
-                 bill_no = result[0].bill_no
-            }
-        })
-       }
-
-    const new_billno =  bill_no+1
-
-    var new_table = ''
-
-    // for (let i in orginal) {
-    //     const item = orginal[i];
-    //     new_table =
-    //       new_table +
-    //       `
-    //   `
-    //   }
-       
-      const rr = orginal.map((item)=>{
-     return   `insert into userbill (product_code,product_title,amount,net_qty,product_type,bill_no,customername,mobilenumber)   values('${item.product_code}','${item.product_title}','${item.amount}','${item.net_qty}','${item.product_type}','${new_billno}','${Customer}','${mobile}')`
-
-      })
-
-   var bill_no = 0
-
-//    console.log('newewewewww',rr.filter(d=>d))
-
-
-
-        db.query(rr,(err,result)=>{
-            if(err){
-                res.status(500).send({message:'error found',errors:err})
-                console.log('throwerr',err)
-            }else{
-            res.send({message:"sucess",results:result,errors:err})
-               console.log('result',result)
-            }
-        })
-        // db.query(`insert into auditlog (firstname,email,mobile,message) values(?,?,?,?)`,[firstname,email,mobile,message],(err,results)=>{
-        //     if(err){
-        //         res.status(500).send({message:"error",errors:err})
-    
-        //     }else{
-        //         console.log('resiult2nd',results)
-        //     }
-        // })
-
     
 })
 

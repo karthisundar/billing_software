@@ -12,7 +12,10 @@ import {  DataTable ,Button, Divider} from 'react-native-paper';
 
 
 
-export default function Editproduct(){
+export default function Editproduct({route}){
+
+    const {loginuser} = route.params
+
     const [search_product , setProduct] = useState('')
     const [editproduct,setEditproduct] = useState([])
     const [editok,seteditok] = useState(false)
@@ -204,7 +207,8 @@ export default function Editproduct(){
        const url = `${app_url}/updateproduct_search`
 
        Axios.post(url,{
-        formdata:formdata
+        formdata:formdata,
+        loginuser:loginuser
        }).then((response)=>{
         console.log('responsedta',response?.data?.results)
         const affected_rows = response?.data?.results?.affectedRows
@@ -232,7 +236,7 @@ export default function Editproduct(){
 
     }
 
-    // console.log("editproduct",editproduct)
+    console.log("editproduct",loginuser)
     return(
         <ImageBackground style={styles.image} source={wood2}>
         <View>

@@ -103,6 +103,7 @@ else
       // console.log('user',user_data[0].user_typeid)
 
       const userId = response?.data?.results[0].user_typeid
+      console.log('userid',userId)
       
         setEmail('')
         setPassword('')
@@ -119,7 +120,9 @@ else
           // AsyncStorage.setItem('user', 'Login')
 
         }else{
-          navigation.navigate('barcode')
+          navigation.navigate('barcode',{
+            loginuser:loginuser
+          })
           setloginuser(user_data)
 
         }
@@ -129,7 +132,7 @@ else
       }else{
         alert('user not found')
       }
-     }).catch(error=>console.log('e',error))
+     }).catch(error=>console.log('login',error))
 
     //   Axios.post(`http://localhost:7001/login`,{
     //   Email:Email,

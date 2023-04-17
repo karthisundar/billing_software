@@ -10,6 +10,7 @@ import Axios from 'axios'
 import { Checkbox,RadioButton } from 'react-native-paper';
 // import Checkbox from './Checkbox'
 import wood2 from './wood2.png'
+import { app_url } from './Ipaddress';
 
 const Signup = props => {
 
@@ -90,7 +91,7 @@ const Signup = props => {
     setEmailerror('')
 
     console.log("error")
-    await Axios.post('http://192.168.0.104:7001/checkemail',{
+    await Axios.post(`${app_url}/checkemail`,{
       email_id
       }).then((response)=>{
         console.log('console',response?.data?.results.length)
@@ -145,9 +146,9 @@ const Signup = props => {
      console.log('email_id',typeof(email_id))
      from_data.push({firstname:firstname,lastname:lastname,Email:email_id,mobilenumber:mobilenumber,password:password,userType:userType})
 
-     const url = 'http://192.168.0.104:7001/signup'
+     const url = `${app_url}/signup`
 
-     Axios.post(url,{
+     Axios.post(`${app_url}/signup`,{
       formdata:from_data
      }).then((response)=>{
       const reponse_data = response?.data?.message
